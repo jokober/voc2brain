@@ -22,12 +22,14 @@ from tabs.add_card_tab import AddCardTab_class
 # MAIN LOOP
 durchl = 0
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, voc2brain_app):
         QtWidgets.QMainWindow.__init__(self)
         uic.loadUi(os.path.abspath(u'.' + u'/ui_resources/MainWindow.ui'), self)
 
         # Get all custom signals
         self.communicate = Communicate()
+
+        self.voc2brain_app = voc2brain_app
 
 
         # Create sqlalchemy engine and session
@@ -100,12 +102,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
-    app.setOrganizationName("Voc2brain")
-    app.setOrganizationDomain("voc2brain.sf.net")
-    app.setApplicationName("voc2brain")
-    app.setAttribute(10)
+    global voc2brain_app
+    voc2brain_app = QtWidgets.QApplication(sys.argv)
+    voc2brain_app.setOrganizationName("Voc2brain")
+    voc2brain_app.setOrganizationDomain("voc2brain.sf.net")
+    voc2brain_app.setApplicationName("voc2brain")
+    voc2brain_app.setAttribute(10)
 
-    mainWindow = MainWindow()
+    mainWindow = MainWindow(voc2brain_app)
     mainWindow.show()
     sys.exit(app.exec_())

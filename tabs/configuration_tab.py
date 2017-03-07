@@ -55,7 +55,7 @@ class ConfigurationTabClass(object):
 
     # Updates all ui-elements
     def reload_config_ui_elements(self):
-        config_dict = ConfigDictClass(self.main_window)
+        config_dict = ConfigDictClass(self.main_window).get_config_dict()
         print type(config_dict)
         print config_dict
 
@@ -153,11 +153,11 @@ class ConfigurationTabClass(object):
             self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Default"))
             stylesheetFile = False
             self.main_window.activate_Designs.setChecked(False)
-            self.designFrame.hide()
+            self.main_window.designFrame.hide()
 
         else:
             self.main_window.activate_Designs.setChecked(True)
-            self.designFrame.show()
+            self.main_window.designFrame.show()
 
             if value == "Green":
                 self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Green"))
@@ -187,13 +187,13 @@ class ConfigurationTabClass(object):
 
             else:
                 if os_adjustment_object.operating_system == 'linux2':
-                    app.setStyle(QtWidgets.QStyleFactory.create("gtk"))
-                    app.setPalette(QtWidgets.QApplication.style().standardPalette())
+                    self.main_window.voc2brain_app.setStyle(QtWidgets.QStyleFactory.create("gtk"))
+                    self.main_window.voc2brain_app.setPalette(QtWidgets.QApplication.style().standardPalette())
 
-                    self.main_window.setStylesheet(os_adjustment_object.stylesheet_general)
+                    self.main_window.voc2brain_app.setStylesheet(os_adjustment_object.stylesheet_general)
                 elif os_adjustment_object.operating_system == 'win32':
                     # app.setStyle(QtWidgets.QStyleFactory.create("plastique"))
-                    app.setPalette(QtWidgets.QApplication.style().standardPalette())
+                    self.main_window.voc2brain_app.setPalette(QtWidgets.QApplication.style().standardPalette())
 
                     self.main_window.setStylesheet(os_adjustment_object.stylesheet_plastique)
 
@@ -204,12 +204,17 @@ class ConfigurationTabClass(object):
         fontsize = QtGui.QFont()
         fontsize.setPointSize(size)
 
-        self.main_window.fontsizeline.setFont(fontsize)
-        self.main_window.vorderseite_eingabe.setFont(fontsize)
-        self.main_window.rueckseite_eingabe.setFont(fontsize)
-        self.main_window.front_side_textedit.setFont(fontsize)
-        self.main_window.flip_side_textedit.setFont(fontsize)
-        self.main_window.fontsizeline.setFont(fontsize)
+        list_of_ui_elements=[
+            (self.main_window.front_input_textedit),
+            (self.main_window.back_input_textedit),
+            (self.main_window.front_side_textedit),
+            (self.main_window.flip_side_textedit),
+            (self.main_window.fontsizeline)
+        ]
+
+        for ui_element in list_of_ui_elements:
+            ui_element.setFont(fontsize)
+
 
     # Resets all settings to default
     def default_settings(self):

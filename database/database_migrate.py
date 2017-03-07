@@ -18,8 +18,12 @@ class DatabaseMigrateClass(object):
     def upgrade_to_vers1(self):
         print "### Info ### Migrate to database version 1"
 
-        # Migrate old "vocabulary" table to "vocabulary_table"
-        old_vocabulary_table = Table('vocabulary', self.main_window.base.metadata, autoload=True, autoload_with=self.main_window.local_engine)
+        try:
+            # Migrate old "vocabulary" table to "vocabulary_table"
+            old_vocabulary_table = Table('vocabulary', self.main_window.base.metadata, autoload=True, autoload_with=self.main_window.local_engine)
+
+        except:
+            return
 
         for row in self.main_window.session.query(old_vocabulary_table).all():
 
