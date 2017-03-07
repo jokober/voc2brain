@@ -14,12 +14,11 @@ from sqlalchemy import Table
 class ConfigDictClass(object):
     def __init__(self, main_window):
         self.main_window = main_window
+
     def get_config_dict(self):
         config_dict = {}
         for row in self.main_window.session.query(Config_Table).all():
             config_dict[row.key] = row.value
-
-        print "Config Dict " + unicode(config_dict)
 
         return config_dict
 
@@ -46,14 +45,19 @@ class ConfigurationTabClass(object):
         self.main_window.reset_config_button.clicked.connect(lambda: self.default_settings())
         self.main_window.about_button.clicked.connect(self.show_aboutDialog)
         self.main_window.report_problem_button.clicked.connect(lambda: webbrowser.open_new_tab("http://voc2brain.sourceforge.net/?page_id=141"))
+        self.main_window.communicate.reload_config_ui_signal.connect(lambda: self.reload_config_ui_elements())
+
+        self.reload_config_ui_elements()
 
     def show_aboutDialog(self):
         self.aboutDialog = aboutDialog()
         self.aboutDialog.show()
 
     # Updates all ui-elements
-    def update_config_ui_elements(self):
+    def reload_config_ui_elements(self):
         config_dict = ConfigDictClass(self.main_window)
+        print type(config_dict)
+        print config_dict
 
         # Load number of completed words to practice
         self.main_window.RandomVocConfigLine.setText(unicode(config_dict["mainConfig/completed_cards_to_practice"]))
@@ -110,6 +114,8 @@ class ConfigurationTabClass(object):
     def save_config(self, args):
         self.main_window.session.query(Config_Table).filter_by(key=args["key"]).update({'value': args["value"]})
         self.main_window.session.commit()
+
+        self.reload_config_ui_elements()
 
     def create_pyqt_connections(self):
         list_of_checkbox_config_ui_elements = [
