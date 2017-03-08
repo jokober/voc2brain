@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtGui, QtCore, uic, QtWidgets
-import datetime
+import datetime, time
 from sqlalchemy import and_
 from random import randrange
 
@@ -47,14 +47,15 @@ class PracticeTabClass(object):
 
         # This will only run if no due cards have been found in the loop above
         self.main_window.deck_indicator_Bar.setValue(0)
-        self.main_window.faellige_vokabeln.setText(unicode(0))
+        self.main_window.amount_due_cards_label.setText(unicode(0))
         self.main_window.flip_side_textedit.setPlainText(u'')
         self.main_window.front_side_textedit.setPlainText(u'')
         self.main_window.flip_side_textedit.setEnabled(False)
 
-        informations = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Information, self.main_window.tr("Hooray!"), self.main_window.tr(
-            "You have been sufficient studiously today - you looked through all available words"))
-        informations.exec_()
+        if time.time() - self.main_window.seconds2 >= 6:
+            informations = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Information, self.main_window.tr("Hooray!"), self.main_window.tr(
+                "You have been sufficient studiously today - you looked through all available words"))
+            informations.exec_()
 
     # CHECKS THE ANSWER AND DECIDES WHEATHER 'right_or_wrong" DIALOG SHOULD BE OPENED OR NOT
     def check_answer(self):

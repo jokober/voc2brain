@@ -66,14 +66,6 @@ class init_main_window_class(object):
         for feature in Featurelist:
             feature[0].setIcon(feature[1])
 
-        # Insert available designs into "design_combo"
-        if self.main_window.design_combo.findText(u"Windows") == -1 and os_adjustment_object.operating_system == 'win32':
-            self.main_window.design_combo.addItem(u"Windows")
-        if self.main_window.design_combo.findText(u"Plastique") == -1 and os_adjustment_object.operating_system != 'win32':
-            self.main_window.design_combo.addItem(u"Plastique")
-        if self.main_window.design_combo.findText(u'Default') == -1:
-            self.main_window.design_combo.addItem(u'Default')
-
         # OS specific changes to the ui
         if os_adjustment_object.operating_system == 'linux2':
             pass

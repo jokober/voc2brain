@@ -53,151 +53,121 @@ class ConfigurationTabClass(object):
         self.aboutDialog = aboutDialog()
         self.aboutDialog.show()
 
-    # Updates all ui-elements
+    # UPDATES CONFIG UI-ELEMENTS BASED ON THE KEY
     def reload_config_ui_elements(self):
         config_dict = ConfigDictClass(self.main_window).get_config_dict()
-        print type(config_dict)
-        print config_dict
 
-        # Load number of completed words to practice
-        self.main_window.RandomVocConfigLine.setText(unicode(config_dict["mainConfig/completed_cards_to_practice"]))
 
-        # Load number of maximum words to practice
-        self.main_window.maxWordCount.setText(unicode(config_dict["mainConfig/max_words"]))
+        # save settings (all checkbox ui elements)
+        for key in self.get_checkbox_config_ui_elements():
+            self.get_checkbox_config_ui_elements()[key].setChecked(bool(config_dict[key]))
+
+        for key in self.get_textedit_config_ui_elements():
+            # save settings (all textedit/lineedit ui elements)
+            self.get_textedit_config_ui_elements()[key].setText(unicode(config_dict[key]))
+
 
         # Check if "font size feature" is activated and load ui-elements accordingly
         if bool(config_dict["mainConfig/fontSize_feature"]) == True:
-            self.main_window.activate_fontsizeFeature.setCheckState(QtCore.Qt.Checked)
             self.main_window.size_frame.show()
             self.set_font_size(size = int(config_dict["mainConfig/font_size"]))
 
         else:
-            self.main_window.activate_fontsizeFeature.setChecked(False)
             self.main_window.size_frame.hide()
             self.set_font_size(size = 14)
 
-        # Update the intval between decks
-        self.main_window.deck1_interval_lineedit.setText(unicode(config_dict["mainConfig/phase1"]))
-        self.main_window.deck2_interval_lineedit.setText(unicode(config_dict["mainConfig/phase2"]))
-        self.main_window.deck3_interval_lineedit.setText(unicode(config_dict["mainConfig/phase3"]))
-        self.main_window.deck4_interval_lineedit.setText(unicode(config_dict["mainConfig/phase4"]))
-        self.main_window.deck5_interval_lineedit.setText(unicode(config_dict["mainConfig/phase5"]))
-        self.main_window.deck6_interval_lineedit.setText(unicode(config_dict["mainConfig/phase6"]))
+        '''
+        if self.main_window.MainTabs.currentIndex() == self.main_window.MainTabs.indexOf(self.main_window.configuration_tab_page):
+            self.search_delay = QtCore.QTimer()
+            self.search_delay.timeout.connect(lambda: self.reload_config_ui_elements())
+            self.search_delay.setSingleShot(True)
+            self.search_delay.start(800)
+            '''
 
-        # Load design
-        self.load_design(value = config_dict["mainConfig/design_feature"])
+    def save_config(self, key):
+        # save settings (all checkbox ui elements)
+        if key in self.get_checkbox_config_ui_elements():
+            self.main_window.session.query(Config_Table).filter_by(key=key).update({'value': unicode(self.get_checkbox_config_ui_elements()[key].isChecked())})
 
-        # Loads multiple languages configuration
-        self.main_window.activate_organise_lessons_feature.setChecked(bool(config_dict["mainConfig/advanced_courses_feature"]))
-        if bool(config_dict["mainConfig/advanced_courses_feature"]) == True:
-            self.frame_9.show()
-            self.language.show()
-            self.comboBox.show()
-        else:
-            self.MainTabs.removeTab(self.MainTabs.indexOf(self.course_tab_page))
-            self.frame_9.hide()
-            self.language.hide()
-            self.comboBox.hide()
+        if key in self.get_textedit_config_ui_elements():
+        # save settings (all textedit/lineedit ui elements)
+            self.main_window.session.query(Config_Table).filter_by(key=key).update({'value': unicode(self.get_textedit_config_ui_elements()[key].text())})
 
-        # Insert all course names to the "course_comboBox"
-        self.main_window.course_comboBox.clear()
-        for course in self.main_window.session.query(Courses_Table).all():
-            if course.course_name == "":
-                self.main_window.course_comboBox.addItem("Course")
-            else:
-                self.main_window.course_comboBox.addItem(course.course_name)
+        # save design choice
+        self.main_window.session.query(Config_Table).filter_by(key="mainConfig/design_choice").update({'value': unicode(self.main_window.design_combo.currentText())})
 
-        # Load reminder checkBoxes
-        self.main_window.own_window_radio.setChecked(bool(config_dict["mainConfig/window_reminder"]))
-        self.main_window.notification_radio.setChecked(bool(config_dict["mainConfig/notification_reminder"]))
-
-    def save_config(self, args):
-        self.main_window.session.query(Config_Table).filter_by(key=args["key"]).update({'value': args["value"]})
+        # commit to database
         self.main_window.session.commit()
+
+        # check if design configurations have been changed - load design if so
+        if key == "mainConfig/design_feature" or key == "mainConfig/design_choice":
+            # Load design
+            self.load_design()
 
         self.reload_config_ui_elements()
 
     def create_pyqt_connections(self):
-        list_of_checkbox_config_ui_elements = [
-            (self.main_window.activate_fontsizeFeature,  "mainConfig/fontSize_feature"),
-            (self.main_window.activate_organise_lessons_feature, "mainConfig/organise_lessons_feature"),
-            (self.main_window.own_window_radio, "mainConfig/window_reminder"),
-            (self.main_window.notification_radio, "mainConfig/notification_reminder"),
-            (self.main_window.activate_Designs, "mainConfig/design_feature"),
-        ]
+        for key in self.get_checkbox_config_ui_elements():
+            self.get_checkbox_config_ui_elements()[key].clicked.connect(partial(self.save_config, key))
 
-        for ui_element, key in list_of_checkbox_config_ui_elements:
-            args = {"key":key, "value": unicode(ui_element.isChecked())}
-            ui_element.clicked.connect(partial(self.save_config, args))
-
-
-            list_of_textedit_config_ui_elements =[
-                (self.main_window.maxWordCount, "mainConfig/max_words"),
-                (self.main_window.deck1_interval_lineedit,"mainConfig/phase1"),
-                (self.main_window.deck2_interval_lineedit, "mainConfig/phase2"),
-                (self.main_window.deck3_interval_lineedit, "mainConfig/phase3"),
-                (self.main_window.deck4_interval_lineedit, "mainConfig/phase4"),
-                (self.main_window.deck5_interval_lineedit, "mainConfig/phase5"),
-                (self.main_window.deck6_interval_lineedit, "mainConfig/phase6"),
-                (self.main_window.RandomVocConfigLine,"mainConfig/VocableReconsiderationKey"),
-
-            ]
-            for ui_element, key in list_of_textedit_config_ui_elements:
-                args = {"key":key, "value": unicode(ui_element.text())}
-                ui_element.editingFinished.connect(partial(self.save_config, args))
-
+        for key in self.get_textedit_config_ui_elements():
+            self.get_textedit_config_ui_elements()[key].textChanged.connect(partial(self.save_config, key ))
 
     # Loads the design based on the saved settings
-    def load_design(self, value):
-        if bool(value) == False:
+    def load_design(self):
+        config_dict = ConfigDictClass(self.main_window).get_config_dict()
+        if config_dict["mainConfig/design_feature"] == "False":
             self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Default"))
-            stylesheetFile = False
             self.main_window.activate_Designs.setChecked(False)
             self.main_window.designFrame.hide()
+            return
 
         else:
             self.main_window.activate_Designs.setChecked(True)
             self.main_window.designFrame.show()
 
-            if value == "Green":
-                self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Green"))
-                stylesheetFile = os_adjustment_object.stylesheet_green
-            elif value == "Plastique":
-                self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Plastique"))
-                app.setStyle(QtWidgets.QStyleFactory.create("plastique"))
-                app.setPalette(QtWidgets.QApplication.style().standardPalette())
 
-                stylesheetFile = os_adjustment_object.stylesheet_plastique
-            elif value == "Windows":
-                self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Windows"))
-                app.setStyle(QtWidgets.QStyleFactory.create("windowsvista"))
-                app.setPalette(QtWidgets.QApplication.style().standardPalette())
+        list_of_styles = [
+            ("Windows","windowsvista", ["win32"]),
+            ("Plastique", "plastique", ["win32", 'linux2']),
+            ("Fusion", "fusion", ["win32", 'linux2']),
+            ("gtk", "gtk", ['linux2']),
 
-                stylesheetFile = os_adjustment_object.stylesheet_general
-            elif value == "Pink":
-                self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Pink"))
-                stylesheetFile = os_adjustment_object.stylesheet_pink
+        ]
 
-            else:
-                self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Default"))
-                stylesheetFile = False
+        # clear design_combo and add default option
+        self.main_window.design_combo.clear()
+        self.main_window.design_combo.addItem(u'Default')
+        self.main_window.applydesign_button.clicked.connect(partial(self.save_config,"mainConfig/design_choice"))
 
-            if stylesheetFile != False:
-                self.main_window.setStylesheet(stylesheetFile)
+        load_design = ""
+        for design_name, style_string, platforms in list_of_styles:
+            print design_name
+            print style_string
+            print platforms
 
-            else:
-                if os_adjustment_object.operating_system == 'linux2':
-                    self.main_window.voc2brain_app.setStyle(QtWidgets.QStyleFactory.create("gtk"))
-                    self.main_window.voc2brain_app.setPalette(QtWidgets.QApplication.style().standardPalette())
+            if os_adjustment_object.operating_system in platforms:
+                print 'OS JAAA'
+                # fill combobox with course_names
+                self.main_window.design_combo.addItem(design_name)
+                print config_dict["mainConfig/design_choice"]
+                print design_name
 
-                    self.main_window.voc2brain_app.setStylesheet(os_adjustment_object.stylesheet_general)
-                elif os_adjustment_object.operating_system == 'win32':
-                    # app.setStyle(QtWidgets.QStyleFactory.create("plastique"))
-                    self.main_window.voc2brain_app.setPalette(QtWidgets.QApplication.style().standardPalette())
 
-                    self.main_window.setStylesheet(os_adjustment_object.stylesheet_plastique)
+                # check
+                if config_dict["mainConfig/design_choice"] == design_name:
+                    load_design = style_string
+                    self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText(design_name))
 
-                self.main_window.hide_design()
+        print load_design
+        # Apply design
+        if load_design != "":
+            self.main_window.voc2brain_app.setStyle(QtWidgets.QStyleFactory.create(load_design))
+            self.main_window.voc2brain_app.setPalette(QtWidgets.QApplication.style().standardPalette())
+        else:
+            print "### Warning ### Design changed to default design"
+            self.main_window.design_combo.setCurrentIndex(self.main_window.design_combo.findText("Default"))
+
 
     # Sets the font size of multiple ui-elements based on the saved value
     def set_font_size(self, size):
@@ -241,6 +211,7 @@ class ConfigurationTabClass(object):
             "mainConfig/user_feature": "False",
             "mainConfig/backup_path": unicode(os_adjustment_object.backup_dirs),
             "mainConfig/design_feature": "False",
+            "mainConfig/design_choice": "fusion",
             "mainConfig/reminder": "True",
             "mainConfig/fontSize_feature": "False",
             "mainConfig/font_size": "14",
@@ -252,10 +223,30 @@ class ConfigurationTabClass(object):
             "mainConfig/phase4": "30",
             "mainConfig/phase5": "90",
             "mainConfig/phase6": "120",
-            "mainConfig/completed_cards_to_practice": "2",
+            'mainConfig/VocableReconsiderationKey': "2",
             "mainConfig/window_reminder": "True",
             "mainConfig/max_words": "60",
             "localization/ui_translation_language": "",
         }
 
+    def get_checkbox_config_ui_elements(self):
+        return {
+            "mainConfig/fontSize_feature": self.main_window.activate_fontsizeFeature,
+            "mainConfig/organise_lessons_feature": self.main_window.activate_organise_lessons_feature,
+            "mainConfig/window_reminder": self.main_window.own_window_radio,
+            "mainConfig/notification_reminder": self.main_window.notification_radio,
+            "mainConfig/design_feature":self.main_window.activate_Designs,
+        }
 
+    def get_textedit_config_ui_elements(self):
+        return {
+            "mainConfig/max_words":self.main_window.maxWordCount,
+            "mainConfig/phase1":self.main_window.deck1_interval_lineedit,
+            "mainConfig/phase2":self.main_window.deck2_interval_lineedit,
+            "mainConfig/phase3":self.main_window.deck3_interval_lineedit,
+            "mainConfig/phase4":self.main_window.deck4_interval_lineedit,
+            "mainConfig/phase5":self.main_window.deck5_interval_lineedit,
+            "mainConfig/phase6":self.main_window.deck6_interval_lineedit,
+            "mainConfig/VocableReconsiderationKey":self.main_window.RandomVocConfigLine
+
+        }

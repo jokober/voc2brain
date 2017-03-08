@@ -15,8 +15,8 @@ class Vocabulary_Table(Base):
     date_next_practice = Column(Date,  nullable=True)
     deck = Column(Integer)
     createdDate = Column(Date)
-    course_name = Column(String)
-    lesson_name = Column(String)
+    lesson_name = Column(String, ForeignKey('lesson_table.lesson_name'))
+    course_name = Column(String, ForeignKey('course_table.course_name'))
     activities = relationship('Activity_Table', backref='card', lazy='dynamic')
 
     # ----------------------------------------------------------------------
@@ -81,7 +81,7 @@ class Metadata_Table(Base):
         self.key = key
         self.value = value
 
-# SINGLE TABLE WHICH INCLUDES THE DATABASE VERSION
+# TABLE WHICH INCLUDES THE ACTIVITIES OF EACH CARD
 class Activity_Table(Base):
     """"""
     __tablename__ = "activity_table"
@@ -98,5 +98,38 @@ class Activity_Table(Base):
         self.timestamp = time()
         self.value = value
         self.card_id = card_id
+
+# TABLE WHICH INCLUDES ALL Courses
+class Course_Table(Base):
+    """"""
+    __tablename__ = "course_table"
+    __table_args__ = {'extend_existing': True}
+
+    course_name = Column(String, primary_key=True)
+    cards = relationship("Vocabulary_Table", backref='course', lazy='dynamic')
+    lessons = relationship("Lesson_Table", backref='course', lazy='dynamic')
+
+    # ----------------------------------------------------------------------
+    def __init__(self,  course_name):
+        """"""
+        self.course_name = course_name
+
+
+# TABLE WHICH INCLUDES ALL LESSONS
+class Lesson_Table(Base):
+    """"""
+    __tablename__ = "lesson_table"
+    __table_args__ = {'extend_existing': True}
+
+    lesson_id = Column(Integer, primary_key=True)
+    lesson_name = Column(String)
+    parent_course = Column(String, ForeignKey('course_table.course_name'))
+    cards = relationship("Vocabulary_Table", backref='lesson', lazy='dynamic')
+
+    # ----------------------------------------------------------------------
+    def __init__(self, lesson_name, course):
+        """"""
+        self.lesson_name = lesson_name
+        self.course = course
 
 

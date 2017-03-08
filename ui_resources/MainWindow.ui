@@ -293,7 +293,7 @@ QScrollArea#scrollArea_3, QScrollArea#scrollArea,  QStackedWidget, QWidget#flash
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>5</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1971,7 +1971,7 @@ border-radius: 5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="add_course_Button">
+                 <widget class="QPushButton" name="add_course_button">
                   <property name="text">
                    <string>New Course</string>
                   </property>
@@ -2072,9 +2072,6 @@ border-radius: 5px;
            </widget>
           </item>
          </layout>
-         <zorder>lessons_manager_treeView</zorder>
-         <zorder>add_lesson_Button</zorder>
-         <zorder>stackedWidget</zorder>
         </widget>
         <widget class="QWidget" name="database_tab_page">
          <attribute name="title">
@@ -4164,7 +4161,18 @@ background-color: rgba(138, 138, 138, 189);
                             </widget>
                            </item>
                            <item>
-                            <widget class="QComboBox" name="design_combo"/>
+                            <layout class="QVBoxLayout" name="verticalLayout_19">
+                             <item>
+                              <widget class="QComboBox" name="design_combo"/>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="applydesign_button">
+                               <property name="text">
+                                <string>PushButton</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </item>
                           </layout>
                          </item>
@@ -4924,7 +4932,6 @@ background-color: rgba(138, 138, 138, 189);
   <tabstop>deck5_interval_lineedit</tabstop>
   <tabstop>deck6_interval_lineedit</tabstop>
   <tabstop>course_comboBox</tabstop>
-  <tabstop>design_combo</tabstop>
   <tabstop>own_window_radio</tabstop>
   <tabstop>notification_radio</tabstop>
   <tabstop>create_reverse_card_checkbox</tabstop>

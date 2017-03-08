@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os, time
 from PyQt5 import QtCore, uic, QtWidgets
 
 from sqlalchemy import create_engine
@@ -61,6 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.stats_tab_page):
             StatsTabClass(self)
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.practice_tab_page):
+            self.seconds2 = time.time()
             self.flip_side_textedit.setFocus()
             PracticeTabClass(self)
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.database_tab_page):
@@ -111,4 +112,4 @@ if __name__ == "__main__":
 
     mainWindow = MainWindow(voc2brain_app)
     mainWindow.show()
-    sys.exit(app.exec_())
+    sys.exit(voc2brain_app.exec_())

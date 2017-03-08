@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 from PyQt5 import QtGui, QtCore, uic, QtWidgets
-from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table
+from database.database_table_definitions import Vocabulary_Table, Course_Table, Lesson_Table,Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table
 from sqlalchemy import Table
 
 # Manage and show the items in TableView Widget
@@ -11,6 +11,7 @@ class CourseTabClass(object):
         self.fill_course_treeview()
         self.fill_lessons_treeview()
 
+        self.main_window.add_course_button.clicked.connect(lambda: self.create_course())
         self.main_window.edit_course_name_button.clicked.connect(lambda: self._rename_course())
         self.main_window.course_manager_treeView.selectionModel().selectionChanged.connect(lambda: self._load_course())
 
@@ -22,7 +23,7 @@ class CourseTabClass(object):
 
         parentItem = self.course_treeview_model
 
-        for course_string in self.main_window.session.query(Vocabulary_Table.course_name).distinct():
+        for course_string in self.main_window.session.query(Course_Table.course_name).distinct():
             parentItem.appendRow(QtGui.QStandardItem(course_string.course_name))
 
         self.main_window.course_manager_treeView.setModel(self.course_treeview_model)
@@ -77,7 +78,18 @@ class CourseTabClass(object):
 
         if ok:
             # updade course names in all cards
-            self.main_window.session.query(Vocabulary_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
+            self.main_window.session.query(Course_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
+            self.main_window.session.commit()
+
+            # load ui elements
+            self.fill_course_treeview()
+
+    def create_course(self):
+        new_course, ok = QtWidgets.QInputDialog.getText(self.main_window, self.main_window.tr('Create Course'), self.main_window.tr('Enter a name for the new course:'))
+
+        if ok:
+            # updade course names in all cards
+            self.main_window.session.add(Course_Table(course_name = new_course))
             self.main_window.session.commit()
 
             # load ui elements
