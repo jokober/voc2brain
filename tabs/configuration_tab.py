@@ -122,6 +122,7 @@ class ConfigurationTabClass(object):
             self.main_window.designFrame.hide()
             return
 
+
         else:
             self.main_window.activate_Designs.setChecked(True)
             self.main_window.designFrame.show()
