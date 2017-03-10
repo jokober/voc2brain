@@ -2,6 +2,7 @@
 import time
 from PyQt5 import QtGui, QtCore, uic, QtWidgets
 from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table
+from dialogs.edit_single_card_dialog import SingleEditDialogClass
 from sqlalchemy import Table
 
 # Manage and show the items in TableView Widget
@@ -64,13 +65,12 @@ class DatabaseTabClass(object):
         indexes = self.main_window.vocabularyList.selectionModel().selectedRows()
         words_to_edit = []
         for self.voc_nr in sorted(indexes):
-            print "ddadada"
-            voc = self.main_window.session.query(Vocabulary_Table).filter_by(id=self.voc_nr.data()).first()
+            voc = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=self.voc_nr.data()).first()
             print voc
 
             words_to_edit.append(voc)
 
-        self.main_window.edDlg = EditDialogClass(words_to_edit, self.main_window, self.main_window.communicate)
+        self.main_window.edDlg = SingleEditDialogClass(words_to_edit, self.main_window, self.main_window.communicate)
         self.main_window.edDlg.show()
 
         # Update QTableView by emitting the "editing_finished_signal"

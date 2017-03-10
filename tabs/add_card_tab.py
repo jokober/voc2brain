@@ -23,7 +23,7 @@ class AddCardTab_class(object):
 
         if frontside and backside:
             first_interrogation = datetime.date.today()
-            card_course = self.main_window.course_comboBox.currentIndex()
+            card_course = self.main_window.course_comboBox.currentText()
             lesson_name = ""
             createdDate= datetime.date.today()
 

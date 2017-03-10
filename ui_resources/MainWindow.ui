@@ -293,7 +293,7 @@ QScrollArea#scrollArea_3, QScrollArea#scrollArea,  QStackedWidget, QWidget#flash
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1623,7 +1623,7 @@ border-radius: 5px;
                      </property>
                      <property name="font">
                       <font>
-                       <pointsize>14</pointsize>
+                       <pointsize>12</pointsize>
                        <weight>50</weight>
                        <bold>false</bold>
                        <kerning>false</kerning>
