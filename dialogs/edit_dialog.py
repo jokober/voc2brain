@@ -6,26 +6,10 @@ from PyQt5 import uic, QtWidgets
 class EditDialogClass(QtWidgets.QDialog):
     def __init__(self, words_to_edit_list, main_window, communicate):
         QtWidgets.QDialog.__init__(self)
-        uic.loadUi(os.path.abspath(u'./ui_resources/edit_word.ui'), self)
+        uic.loadUi(os.path.abspath(u'./ui_resources/edit_single_card.ui'), self)
         self.words_to_edit_list = words_to_edit_list
         self.main_window = main_window
         self.communicate = communicate
-
-        if appSettings.value("mainConfig/languageFeatureKey", False) == False:
-            self.language_combo.hide()
-
-        elif appSettings.value("mainConfig/languageFeatureKey", False) == True:
-            self.language_combo.clear()
-            if appSettings.value("languageFeature/Language0Key", "Default") != '':
-                self.language_combo.addItem(appSettings.value("languageFeature/Language0Key", "Default"))
-            if appSettings.value("languageFeature/Language1Key", "") != '':
-                self.language_combo.addItem(appSettings.value("languageFeature/Language1Key", ""))
-            if appSettings.value("languageFeature/Language2Key", "") != '':
-                self.language_combo.addItem(appSettings.value("languageFeature/Language2Key", ""))
-            if appSettings.value("languageFeature/Language3Key", "") != '':
-                self.language_combo.addItem(appSettings.value("languageFeature/Language3Key", ""))
-
-
 
         self.delete_item.clicked.connect(self.delete_voc)
         self.ed_ok.clicked.connect(self.save_changes)
@@ -37,7 +21,7 @@ class EditDialogClass(QtWidgets.QDialog):
         if not len(self.words_to_edit_list) ==0:
             self.current_word = self.words_to_edit_list[0]
 
-            self.language_combo.setCurrentIndex(self.language_combo.findText(self.current_word.language))
+            self.course_combo.setCurrentIndex(self.course_combo.findText(self.current_word.language))
 
             self.select_step.setValue(int(self.current_word.deck))
             self.select_step.setSuffix('')
@@ -62,7 +46,7 @@ class EditDialogClass(QtWidgets.QDialog):
 
     # SAVE THE CHANGES
     def save_changes(self):
-        new_language = self.language_combo.currentIndex()
+        new_language = self.course_combo.currentIndex()
         if new_language == -1:
             new_language = 0
 
