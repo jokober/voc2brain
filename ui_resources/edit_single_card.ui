@@ -206,7 +206,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="select_step">
+      <widget class="QSpinBox" name="deck_spinbox">
        <property name="suffix">
         <string notr="true"/>
        </property>
