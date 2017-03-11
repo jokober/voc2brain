@@ -58,8 +58,11 @@ class DatabaseMigrateClass(object):
             # Set the createdDate to a random date in the past
             createdDate = datetime.date(1,1,1)
 
+            course_object = self.main_window.session.query(Course_Table.course_name).filter_by(course_name=row.language)
+
+
             # add cards to the new table
-            self.main_window.session.add(Vocabulary_Table(front = row.front, back = row.back, date_next_practice = new_date, deck = row.phase, createdDate = createdDate, course_name = row.language, lesson_name = "1"))
+            self.main_window.session.add(Vocabulary_Table(front = row.front, back = row.back, date_next_practice = new_date, deck = row.phase, createdDate = createdDate, course_name = course_object, lesson_name = "1"))
         self.main_window.session.commit()
 
         ################################################

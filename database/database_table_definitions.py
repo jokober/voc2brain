@@ -107,7 +107,7 @@ class Course_Table(Base):
 
     course_name = Column(String, primary_key=True)
     cards = relationship("Vocabulary_Table", backref='course', lazy='dynamic')
-    lessons = relationship("Lesson_Table", backref='course', lazy='dynamic')
+    lessons = relationship("Lesson_Table", backref='lesson', lazy='dynamic')
 
     # ----------------------------------------------------------------------
     def __init__(self,  course_name):

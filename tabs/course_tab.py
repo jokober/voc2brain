@@ -12,7 +12,7 @@ class CourseTabClass(object):
         self.fill_lessons_treeview()
 
         self.main_window.add_course_button.clicked.connect(lambda: self.create_course())
-        self.main_window.edit_course_name_button.clicked.connect(lambda: self._rename_course())
+        self.main_window.edit_course_name_button.clicked.connect(lambda: self.rename_course())
         self.main_window.course_manager_treeView.selectionModel().selectionChanged.connect(lambda: self._load_course())
 
     # FILLS THE TREEVIEW WIDGET WITH COURSE NAMES
@@ -71,14 +71,23 @@ class CourseTabClass(object):
         current_course_name = unicode(self._get_selected_course())
         self.main_window.course_name_label.setText(unicode(current_course_name))
 
-    def _rename_course(self):
+    def rename_course(self):
         current_course_name = self._get_selected_course()
+
+        query = self.main_window.session.query(Course_Table).filter_by(course_name=current_course_name).first()
+        print "daa"
+        for i in query.cards.all():
+            print unicode(i.front)
+        print "hier"
+
+
 
         new_course_name, ok = QtWidgets.QInputDialog.getText(self.main_window, self.main_window.tr('Edit Course Name'), self.main_window.tr('Enter a new name for this course:'), QtWidgets.QLineEdit.Normal, current_course_name)
 
         if ok:
             # updade course names in all cards
-            self.main_window.session.query(Course_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
+            query = self.main_window.session.query(Course_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
+            self.main_window.session.query(Vocabulary_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
             self.main_window.session.commit()
 
             # load ui elements
