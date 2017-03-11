@@ -85,6 +85,11 @@ class CourseTabClass(object):
         new_course_name, ok = QtWidgets.QInputDialog.getText(self.main_window, self.main_window.tr('Edit Course Name'), self.main_window.tr('Enter a new name for this course:'), QtWidgets.QLineEdit.Normal, current_course_name)
 
         if ok:
+            # check if course already exists
+            if self.main_window.session.query(Course_Table).filter_by(course_name=new_course_name).first():
+                self.show_course_exists_error()
+                return
+
             # updade course names in all cards
             query = self.main_window.session.query(Course_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
             self.main_window.session.query(Vocabulary_Table.course_name).filter_by(course_name=current_course_name).update({'course_name': new_course_name})
@@ -95,11 +100,23 @@ class CourseTabClass(object):
 
     def create_course(self):
         new_course, ok = QtWidgets.QInputDialog.getText(self.main_window, self.main_window.tr('Create Course'), self.main_window.tr('Enter a name for the new course:'))
+        print "loos"
 
         if ok:
+            # check if course already exists
+            if self.main_window.session.query(Course_Table).filter_by(course_name=new_course).first():
+                self.show_course_exists_error()
+                return
+
             # updade course names in all cards
-            self.main_window.session.add(Course_Table(course_name = new_course))
+            self.main_window.session.merge(Course_Table(course_name = new_course))
             self.main_window.session.commit()
 
             # load ui elements
             self.fill_course_treeview()
+
+    def show_course_exists_error(self):
+        error = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Critical, self.main_window.tr("Course already exists"),
+                                           self.main_window.tr(
+                                               "A course with the same name already exists. Please choose another name for the course."))
+        error.exec_()

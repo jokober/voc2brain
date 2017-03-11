@@ -2,7 +2,7 @@
 from PyQt5 import QtWidgets
 import time
 import datetime
-from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table
+from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table, Course_Table
 
 
 # ADD NEW WORD TO THE DATABASE
@@ -14,7 +14,7 @@ class AddCardTab_class(object):
 
         # fill combobox with course_names
         self.main_window.course_comboBox.clear()
-        for result in self.main_window.session.query(Vocabulary_Table.course_name).distinct().all():
+        for result in self.main_window.session.query(Course_Table.course_name).distinct().all():
             self.main_window.course_comboBox.addItem(result.course_name)
 
     def add_card(self):
