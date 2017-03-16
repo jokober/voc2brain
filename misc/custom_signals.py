@@ -8,7 +8,7 @@ class Communicate(QtCore.QObject):
     new_practice_card_signal = QtCore.pyqtSignal()
 
     # Signals for configurations
-    reload_config_ui_signal = QtCore.pyqtSignal()
+    config_updated = QtCore.pyqtSignal()
 
     # Signals in RightorWrong dialog
     right_answer_signal = QtCore.pyqtSignal(int)

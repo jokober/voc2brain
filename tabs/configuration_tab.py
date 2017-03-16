@@ -2,6 +2,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 import random, webbrowser
 from functools import partial
+from pyqtconfig import config
 
 from misc.os_adjustments import os_adjustment_object
 from misc.backup_database import BackupDatabaseClass
@@ -11,16 +12,64 @@ from dialogs.about_dialog import aboutDialog
 from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table, Activity_Table
 from sqlalchemy import Table
 
-class ConfigDictClass(object):
+class ConfigManagerClass(object):
     def __init__(self, main_window):
         self.main_window = main_window
 
+        # initiate config manager
+        self.config_manager = config.ConfigManager(self.main_window)
+
+        # load saved configurations
+        self.load_config()
+
+        self.main_window.communicate.config_updated.connect(lambda: self.save_config_to_db())
+
+    def save_config_to_db(self):
+        """
+        Saves the current configurations in Config Manager to the database
+        """
+        print "### Info ### Save confic dict to db"
+        print unicode(bool(1))
+        config_dict = self.get_config_dict()
+        for config_key in config_dict:
+            self.main_window.session.query(Config_Table).filter_by(key=config_key).update({'value': config_dict[config_key]})
+        self.main_window.session.commit()
+
     def get_config_dict(self):
+        """
+        Returns a dict with the current configurations
+        """
+        print self.config_manager.as_dict()
+        return self.config_manager.as_dict()
+
+    def load_config(self):
+        """
+        Loads the configurations from database and loads them into the Config Manager
+        """
         config_dict = {}
         for row in self.main_window.session.query(Config_Table).all():
             config_dict[row.key] = row.value
 
-        return config_dict
+        self.config_manager.set_defaults(config_dict)
+
+    def get(self, config_key):
+        """
+        Returns the value of a config_key
+        """
+        return self.config_manager.get(config_key)
+
+    def set(self, config_key, value):
+        """
+        Sets the config to a new value. The UI-elements will change their status accordingly.
+        Save the new settings to the database.
+        """
+        self.config_manager.set(config_key, value)
+
+        self.save_config_to_db()
+        
+    def add_config_handler(self,config_key, ui_element):
+        self.config_manager.add_handler(config_key, ui_element)
+
 
 class ConfigurationTabClass(object):
     def __init__(self, main_window):
@@ -32,9 +81,6 @@ class ConfigurationTabClass(object):
         # Check if all configuration keys are saved in the database
         self.check_existence_of_configkeys()
 
-        # Run function which creates the connections in the "configuration_tab"
-        self.create_pyqt_connections()
-
         # Connect the settings buttons to the individual page
         self.main_window.SettingsTab_flashcard.pressed.connect(lambda: self.main_window.configTabs.setCurrentIndex(0))
         self.main_window.SettingsTab_reminder.pressed.connect(lambda: self.main_window.configTabs.setCurrentIndex(1))
@@ -45,73 +91,10 @@ class ConfigurationTabClass(object):
         self.main_window.reset_config_button.clicked.connect(lambda: self.default_settings())
         self.main_window.about_button.clicked.connect(self.show_aboutDialog)
         self.main_window.report_problem_button.clicked.connect(lambda: webbrowser.open_new_tab("http://voc2brain.sourceforge.net/?page_id=141"))
-        self.main_window.communicate.reload_config_ui_signal.connect(lambda: self.reload_config_ui_elements())
-
-        self.reload_config_ui_elements()
 
     def show_aboutDialog(self):
         self.aboutDialog = aboutDialog()
         self.aboutDialog.show()
-
-    # UPDATES CONFIG UI-ELEMENTS BASED ON THE KEY
-    def reload_config_ui_elements(self):
-        config_dict = ConfigDictClass(self.main_window).get_config_dict()
-
-
-        # save settings (all checkbox ui elements)
-        for key in self.get_checkbox_config_ui_elements():
-            self.get_checkbox_config_ui_elements()[key].setChecked(bool(config_dict[key]))
-
-        for key in self.get_textedit_config_ui_elements():
-            # save settings (all textedit/lineedit ui elements)
-            self.get_textedit_config_ui_elements()[key].setText(unicode(config_dict[key]))
-
-
-        # Check if "font size feature" is activated and load ui-elements accordingly
-        if bool(config_dict["mainConfig/fontSize_feature"]) == True:
-            self.main_window.size_frame.show()
-            self.set_font_size(size = int(config_dict["mainConfig/font_size"]))
-
-        else:
-            self.main_window.size_frame.hide()
-            self.set_font_size(size = 14)
-
-        '''
-        if self.main_window.MainTabs.currentIndex() == self.main_window.MainTabs.indexOf(self.main_window.configuration_tab_page):
-            self.search_delay = QtCore.QTimer()
-            self.search_delay.timeout.connect(lambda: self.reload_config_ui_elements())
-            self.search_delay.setSingleShot(True)
-            self.search_delay.start(800)
-            '''
-
-    def save_config(self, key):
-        # save settings (all checkbox ui elements)
-        if key in self.get_checkbox_config_ui_elements():
-            self.main_window.session.query(Config_Table).filter_by(key=key).update({'value': unicode(self.get_checkbox_config_ui_elements()[key].isChecked())})
-
-        if key in self.get_textedit_config_ui_elements():
-        # save settings (all textedit/lineedit ui elements)
-            self.main_window.session.query(Config_Table).filter_by(key=key).update({'value': unicode(self.get_textedit_config_ui_elements()[key].text())})
-
-        # save design choice
-        self.main_window.session.query(Config_Table).filter_by(key="mainConfig/design_choice").update({'value': unicode(self.main_window.design_combo.currentText())})
-
-        # commit to database
-        self.main_window.session.commit()
-
-        # check if design configurations have been changed - load design if so
-        if key == "mainConfig/design_feature" or key == "mainConfig/design_choice":
-            # Load design
-            self.load_design()
-
-        self.reload_config_ui_elements()
-
-    def create_pyqt_connections(self):
-        for key in self.get_checkbox_config_ui_elements():
-            self.get_checkbox_config_ui_elements()[key].clicked.connect(partial(self.save_config, key))
-
-        for key in self.get_textedit_config_ui_elements():
-            self.get_textedit_config_ui_elements()[key].textChanged.connect(partial(self.save_config, key ))
 
     # Loads the design based on the saved settings
     def load_design(self):
@@ -190,6 +173,7 @@ class ConfigurationTabClass(object):
     # Resets all settings to default
     def default_settings(self):
         # Get a dictionary with all config keys and default values
+            print "### Warning ### Reset all configurations to default"
             for config in self.main_window.session.query(Config_Table).all():
                 config.value = self.key_dictionary[config.key]
             self.main_window.session.commit()
@@ -230,24 +214,26 @@ class ConfigurationTabClass(object):
             "localization/ui_translation_language": "",
         }
 
-    def get_checkbox_config_ui_elements(self):
-        return {
-            "mainConfig/fontSize_feature": self.main_window.activate_fontsizeFeature,
-            "mainConfig/organise_lessons_feature": self.main_window.activate_organise_lessons_feature,
-            "mainConfig/window_reminder": self.main_window.own_window_radio,
-            "mainConfig/notification_reminder": self.main_window.notification_radio,
-            "mainConfig/design_feature":self.main_window.activate_Designs,
-        }
 
-    def get_textedit_config_ui_elements(self):
-        return {
-            "mainConfig/max_words":self.main_window.maxWordCount,
-            "mainConfig/phase1":self.main_window.deck1_interval_lineedit,
-            "mainConfig/phase2":self.main_window.deck2_interval_lineedit,
-            "mainConfig/phase3":self.main_window.deck3_interval_lineedit,
-            "mainConfig/phase4":self.main_window.deck4_interval_lineedit,
-            "mainConfig/phase5":self.main_window.deck5_interval_lineedit,
-            "mainConfig/phase6":self.main_window.deck6_interval_lineedit,
-            "mainConfig/VocableReconsiderationKey":self.main_window.RandomVocConfigLine
+"""        # Check if "font size feature" is activated and load ui-elements accordingly
+        if bool(config_dict["mainConfig/fontSize_feature"]) == True:
+            # self.main_window.size_frame.show()
+            self.set_font_size(size=int(config_dict["mainConfig/font_size"]))
 
-        }
+        else:
+            self.main_window.size_frame.hide()
+            self.set_font_size(size=14)
+
+
+
+
+
+
+
+
+
+
+        # check if design configurations have been changed - load design if so
+        if key == "mainConfig/design_feature" or key == "mainConfig/design_choice":
+            # Load design
+            self.load_design()"""

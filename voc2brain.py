@@ -12,7 +12,7 @@ from database.database_migrate import DatabaseMigrateClass
 from dialogs.language_switcher import lsDialog
 from misc.os_adjustments import os_adjustment_object
 
-from tabs.configuration_tab import ConfigurationTabClass
+from tabs.configuration_tab import ConfigurationTabClass, ConfigManagerClass
 from tabs.database_tab import DatabaseTabClass
 from tabs.practice_tab import PracticeTabClass
 from tabs.stats_tab import StatsTabClass
@@ -33,7 +33,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         # Create sqlalchemy engine and session
-        self.local_engine = create_engine('sqlite:///'+ os_adjustment_object.database_path, isolation_level="READ UNCOMMITTED", echo= True )
+        self.local_engine = create_engine('sqlite:///'+ os_adjustment_object.database_path, isolation_level="READ UNCOMMITTED" )
 
         self.Session = sessionmaker(bind=self.local_engine)
         self.session = self.Session()
@@ -50,8 +50,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.MainTabs.currentChanged.connect(self.whichTab)
 
-        # Prepare configurations
-        ConfigurationTabClass(self)
+        # Prepare config manager
+        self.config = ConfigManagerClass(self)
+
+        dict_of_ui_elements_and_config_keys = {
+            "mainConfig/fontSize_feature": self.activate_fontsizeFeature,
+            "mainConfig/organise_lessons_feature": self.activate_organise_lessons_feature,
+            "mainConfig/window_reminder": self.own_window_radio,
+            "mainConfig/notification_reminder": self.notification_radio,
+            "mainConfig/design_feature": self.activate_Designs,
+            "mainConfig/max_words": self.maxWordCount,
+            "mainConfig/phase1": self.deck1_interval_lineedit,
+            "mainConfig/phase2": self.deck2_interval_lineedit,
+            "mainConfig/phase3": self.deck3_interval_lineedit,
+            "mainConfig/phase4": self.deck4_interval_lineedit,
+            "mainConfig/phase5": self.deck5_interval_lineedit,
+            "mainConfig/phase6": self.deck6_interval_lineedit,
+            "mainConfig/VocableReconsiderationKey": self.RandomVocConfigLine,
+            "mainConfig/design_choice":self.design_combo
+        }
+
+        for config_key in dict_of_ui_elements_and_config_keys:
+            ui_element = dict_of_ui_elements_and_config_keys[config_key]
+            self.config.add_config_handler(config_key, ui_element)
 
     def __run__(self):
         pass
@@ -67,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.database_tab_page):
             DatabaseTabClass(self).fill_table()
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.configuration_tab_page):
+            self.config.get_config_dict()
             ConfigurationTabClass(self)
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.course_tab_page):
             CourseTabClass(self)
