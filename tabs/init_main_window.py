@@ -11,18 +11,35 @@ class init_main_window_class(object):
         self.init_ui_elememts()
 
     def init_ui_elememts(self):
-# Start Tab: Load icons, connect signals and initiate ui elements in the "Start Tab"
+        #############################
+        # Start Tab: Load icons, connect signals and initiate ui elements in the "Start Tab"
+        #############################
         self.main_window.MainTabs.setTabIcon(self.main_window.MainTabs.indexOf(self.main_window.stats_tab_page), QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_start.svg')))
-# Practice Tab: Load icons, connect signals and initiate ui elements in the "Practice Tab"
+
+        #############################
+        # Practice Tab: Load icons, connect signals and initiate ui elements in the "Practice Tab"
+        #############################
         self.main_window.MainTabs.setTabIcon(self.main_window.MainTabs.indexOf(self.main_window.practice_tab_page), QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_interrogation.svg')))
-# New Word Tab: Load icons, connect signals and initiate ui elements in the "New Word Tab"
+
+        #############################
+        # New Word Tab: Load icons, connect signals and initiate ui elements in the "New Word Tab"
+        #############################
         self.main_window.MainTabs.setTabIcon(self.main_window.MainTabs.indexOf(self.main_window.add_card_tab_page), QtGui.QIcon(os.path.join(os.path.abspath(u'.'), u'icons/tab_add.svg')))
-# Database Tab: Load icons, connect signals and initiate ui elements in the "Database Tab"
+
+        #############################
+        # Database Tab: Load icons, connect signals and initiate ui elements in the "Database Tab"
+        #############################
         self.main_window.MainTabs.setTabIcon(self.main_window.MainTabs.indexOf(self.main_window.database_tab_page), QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_list.svg')))
-# Database Tab: Load icons, connect signals and initiate ui elements in the "Database Tab"
+
+        #############################
+        # Database Tab: Load icons, connect signals and initiate ui elements in the "Database Tab"
+        #############################
         self.main_window.MainTabs.setTabIcon(self.main_window.MainTabs.indexOf(self.main_window.course_tab_page),
                                      QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_courses_grey_2.svg')))
-# Configuration Tab: Load icons, connect signals and initiate ui elements in the "Configuration Tab"
+
+        #############################
+        # Configuration Tab: Load icons, connect signals and initiate ui elements in the "Configuration Tab"
+        #############################
         self.main_window.MainTabs.setTabIcon(self.main_window.MainTabs.indexOf(self.main_window.configuration_tab_page), QtGui.QIcon(os.path.join(os.path.abspath(u'.'), u'icons/tab_conf.svg')))
 
         Tablist = [
@@ -66,7 +83,27 @@ class init_main_window_class(object):
         for feature in Featurelist:
             feature[0].setIcon(feature[1])
 
+
+        list_of_styles = [
+            ("windowsvista", ["win32"]),
+            ("plastique", ["win32", 'linux2']),
+            ("fusion", ["win32", 'linux2']),
+            ("gtk", ['linux2'])]
+
+        # clear design_combo and add default option
+        self.main_window.design_combo.clear()
+        self.main_window.design_combo.addItem(u'Default')
+
+        for style_string, platforms in list_of_styles:
+            if os_adjustment_object.operating_system in platforms:
+                # fill combobox with course_names
+                self.main_window.design_combo.addItem(style_string)
+
+
+
+        ######################
         # OS specific changes to the ui
+        ######################
         if os_adjustment_object.operating_system == 'linux2':
             pass
         elif os_adjustment_object.operating_system == "darwin":
@@ -74,6 +111,14 @@ class init_main_window_class(object):
             self.main_window.line_12.hide()
         elif os_adjustment_object.operating_system == 'win32':
             pass
+
+
+
+
+
+
+
+
 
 
 

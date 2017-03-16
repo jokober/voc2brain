@@ -31,7 +31,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.voc2brain_app = voc2brain_app
 
-
         # Create sqlalchemy engine and session
         self.local_engine = create_engine('sqlite:///'+ os_adjustment_object.database_path, isolation_level="READ UNCOMMITTED" )
 
@@ -47,7 +46,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Prepare the ui
         init_main_window_class(self)
-
         self.MainTabs.currentChanged.connect(self.whichTab)
 
         # Prepare config manager
@@ -67,7 +65,8 @@ class MainWindow(QtWidgets.QMainWindow):
             "mainConfig/phase5": self.deck5_interval_lineedit,
             "mainConfig/phase6": self.deck6_interval_lineedit,
             "mainConfig/VocableReconsiderationKey": self.RandomVocConfigLine,
-            "mainConfig/design_choice":self.design_combo
+            "mainConfig/design_choice":self.design_combo,
+            "mainConfig/font_size":self.fontsizecombo
         }
 
         for config_key in dict_of_ui_elements_and_config_keys:

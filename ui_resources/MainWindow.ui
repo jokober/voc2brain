@@ -4025,36 +4025,6 @@ background-color: rgba(138, 138, 138, 189);
                     <item>
                      <layout class="QVBoxLayout" name="verticalLayout_29">
                       <item>
-                       <widget class="QFrame" name="frame_9">
-                        <property name="font">
-                         <font>
-                          <pointsize>11</pointsize>
-                         </font>
-                        </property>
-                        <layout class="QVBoxLayout" name="verticalLayout_12">
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <item>
-                          <widget class="QLabel" name="label_43">
-                           <property name="font">
-                            <font>
-                             <weight>75</weight>
-                             <bold>true</bold>
-                            </font>
-                           </property>
-                           <property name="lineWidth">
-                            <number>0</number>
-                           </property>
-                           <property name="text">
-                            <string>Several languages</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                      <item>
                        <widget class="QFrame" name="size_frame">
                         <property name="frameShape">
                          <enum>QFrame::NoFrame</enum>
