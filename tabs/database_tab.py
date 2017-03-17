@@ -3,7 +3,7 @@ import time
 from PyQt5 import QtGui, QtCore, uic, QtWidgets
 from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table
 from dialogs.edit_single_card_dialog import SingleEditDialogClass
-from sqlalchemy import Table
+from dialogs.misc_dialogs import miscDialogs
 
 # Manage and show the items in TableView Widget
 class DatabaseTabClass(object):
@@ -61,15 +61,17 @@ class DatabaseTabClass(object):
     def edit_voc(self):
         print "edit..."
         indexes = self.main_window.vocabularyList.selectionModel().selectedRows()
-        words_to_edit = []
+        cards_to_edit = []
         for self.voc_nr in sorted(indexes):
-            voc = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=self.voc_nr.data()).first()
-            print voc
+            cards_to_edit.append(self.voc_nr)
 
-            words_to_edit.append(voc)
-
-        self.main_window.edDlg = SingleEditDialogClass(words_to_edit, self.main_window, self.main_window.communicate)
-        self.main_window.edDlg.show()
+        if len(cards_to_edit)==1:
+            self.main_window.edDlg = SingleEditDialogClass(cards_to_edit[0], self.main_window)
+            self.main_window.edDlg.show()
+        elif len(cards_to_edit)>=1:
+            pass
+        elif len(cards_to_edit)==0:
+            miscDialogs(self.main_window).NoSelectionMessageBox()
 
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()

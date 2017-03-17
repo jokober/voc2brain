@@ -9,7 +9,7 @@ class SingleEditDialogClass(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         uic.loadUi(os.path.abspath(u'./ui_resources/edit_single_card.ui'), self)
 
-        self.card_to_edit = card_to_edit
+        self.words_to_edit_list = card_to_edit
         self.main_window = main_window
 
         self.delete_item.clicked.connect(self.delete_voc)
@@ -17,24 +17,34 @@ class SingleEditDialogClass(QtWidgets.QDialog):
 
         self.load_new_card()
 
+        voc = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=self.voc_nr.data()).first()
+        print voc
+
     def load_new_card(self):
         """
-        Loads a new card into the dialog.
+        Loads a new word into the dialog if there are still items in
+        the "words_to_edit_list". If there are not items left in the
+        list, the dialog will be closed.
 
         """
+        if not len(self.words_to_edit_list) ==0:
+            self.current_word = self.words_to_edit_list[0]
 
-        self.current_word = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=self.card_to_edit).first()
+            self.course_combo.setCurrentIndex(self.course_combo.findText(self.current_word.course))
 
-        self.course_combo.setCurrentIndex(self.course_combo.findText(self.current_word.course))
+            self.lesson_combo.setCurrentIndex(self.lesson_combo.findText(self.current_word.lesson))
 
-        self.lesson_combo.setCurrentIndex(self.lesson_combo.findText(self.current_word.lesson))
+            self.select_step.setValue(int(self.current_word.deck))
+            self.select_step.setSuffix('')
+            self.select_step.setPrefix('')
 
-        self.select_step.setValue(int(self.current_word.deck))
-        self.select_step.setSuffix('')
-        self.select_step.setPrefix('')
+            self.front_side_textedit.setPlainText(self.current_word.front)
+            self.flip_side_textedit.setPlainText(self.current_word.back)
 
-        self.front_side_textedit.setPlainText(self.current_word.front)
-        self.flip_side_textedit.setPlainText(self.current_word.back)
+            del self.words_to_edit_list[0]
+
+        else:
+            self.close()
 
     # DELETE THE CURRENT WORD
     def delete_voc(self):
@@ -43,8 +53,8 @@ class SingleEditDialogClass(QtWidgets.QDialog):
 
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()
+        self.load_new_card()
 
-        self.close()
 
     # SAVE THE CHANGES
     def save_changes(self):
@@ -64,4 +74,5 @@ class SingleEditDialogClass(QtWidgets.QDialog):
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()
 
-        self.close()
+        self.load_new_card()
+

@@ -4,71 +4,77 @@ import os, sys
 
 # CLASS WHICH MANAGES ADJUSTMENTS FOR THE SPECIFIC OS
 class os_adjustment_object(object):
-    operating_system = unicode(sys.platform)
+    def __init__(self, main_window):
+        self.operating_system = unicode(sys.platform)
 
-    if operating_system == 'linux2':
-        workplace = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain')
-        database_path = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/vocabulary.sdb3')
-        statistics_database_path = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/UserStat.sdb3')
-        backup_dirs = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/backups')
+        if self.operating_system == 'linux2':
+            if main_window.development_version == True:
+                self.workplace = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/development')
+            elif main_window.development_version == False:
+                self.workplace = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain')
 
-        stylesheet_plastique = [os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique.qss'),
-                                os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique_background.qss')]
-        stylesheet_green = [os.path.join(os.path.abspath(u'.'), u'stylesheets/green.qss'),
-                            os.path.join(os.path.abspath(u'.'), u'stylesheets/green_background.qss')]
-        stylesheet_pink = [os.path.join(os.path.abspath(u'.'), u'stylesheets/pink.qss'),
-                           os.path.join(os.path.abspath(u'.'), u'stylesheets/pink_background.qss')]
-        stylesheet_general = [os.path.join(os.path.abspath(u'.'), u'stylesheets/general.qss'),
-                              os.path.join(os.path.abspath(u'.'), u'stylesheets/general_background.qss')]
+            self.database_path = os.path.abspath(self.workplace + u'/vocabulary.sdb3')
+            self.backup_dirs = os.path.abspath(self.workplace + u'/backups')
 
-        if not os.path.exists(os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain')):
-            os.mkdir(os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain'))
+            self.stylesheet_plastique = [os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique.qss'),
+                                    os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique_background.qss')]
+            self.stylesheet_green = [os.path.join(os.path.abspath(u'.'), u'stylesheets/green.qss'),
+                                os.path.join(os.path.abspath(u'.'), u'stylesheets/green_background.qss')]
+            self.stylesheet_pink = [os.path.join(os.path.abspath(u'.'), u'stylesheets/pink.qss'),
+                               os.path.join(os.path.abspath(u'.'), u'stylesheets/pink_background.qss')]
+            self.stylesheet_general = [os.path.join(os.path.abspath(u'.'), u'stylesheets/general.qss'),
+                                  os.path.join(os.path.abspath(u'.'), u'stylesheets/general_background.qss')]
 
-        if not os.path.exists(os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/backups')):
-            os.mkdir(os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/backups'))
+            if not os.path.exists(os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain')):
+                os.mkdir(os.path.abspath(os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain')))
 
-    elif operating_system == "darwin":
-        workplace = os.path.abspath(os.path.expanduser(u'~') + u'/Library/Application Support/voc2brain')
-        database_path = os.path.abspath(workplace + u'/vocabulary.sdb3')
-        statistics_database_path = os.path.abspath(workplace + u'/UserStat.sdb3')
-        backup_dirs = os.path.abspath(workplace + u'/backups')
+            if not os.path.exists(self.workplace):
+                os.mkdir(self.workplace)
 
-        stylesheet_plastique = [os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique.qss'),
-                                os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique_background.qss')]
-        stylesheet_green = [os.path.join(os.path.abspath(u'.'), u'stylesheets/green.qss'),
-                            os.path.join(os.path.abspath(u'.'), u'stylesheets/green_background.qss')]
-        stylesheet_pink = [os.path.join(os.path.abspath(u'.'), u'stylesheets/pink.qss'),
-                           os.path.join(os.path.abspath(u'.'), u'stylesheets/pink_background.qss')]
-        stylesheet_general = [os.path.join(os.path.abspath(u'.'), u'stylesheets/general.qss'),
-                              os.path.join(os.path.abspath(u'.'), u'stylesheets/general_background.qss')]
+            if not os.path.exists(os.path.abspath(self.workplace + u'/backups')):
+                os.mkdir(os.path.abspath(self.workplace + u'/backups'))
 
-        if not os.path.exists(workplace):
-            os.mkdir(os.path.abspath(workplace))
+        elif self.operating_system == "darwin":
+            self.workplace = os.path.abspath(os.path.expanduser(u'~') + u'/Library/Application Support/voc2brain')
+            self.database_path = os.path.abspath(workplace + u'/vocabulary.sdb3')
+            self.backup_dirs = os.path.abspath(workplace + u'/backups')
 
-        if not os.path.exists(backup_dirs):
-            os.mkdir(os.path.abspath(backup_dirs))
+            self.stylesheet_plastique = [os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique.qss'),
+                                    os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique_background.qss')]
+            self.stylesheet_green = [os.path.join(os.path.abspath(u'.'), u'stylesheets/green.qss'),
+                                os.path.join(os.path.abspath(u'.'), u'stylesheets/green_background.qss')]
+            self.stylesheet_pink = [os.path.join(os.path.abspath(u'.'), u'stylesheets/pink.qss'),
+                               os.path.join(os.path.abspath(u'.'), u'stylesheets/pink_background.qss')]
+            self.stylesheet_general = [os.path.join(os.path.abspath(u'.'), u'stylesheets/general.qss'),
+                                  os.path.join(os.path.abspath(u'.'), u'stylesheets/general_background.qss')]
+
+            if not os.path.exists(self.workplace):
+                os.mkdir(os.path.abspath(self.workplace))
+
+            if not os.path.exists(self.backup_dirs):
+                os.mkdir(os.path.abspath(self.backup_dirs))
 
 
 
-    elif operating_system == 'win32':
-        workplace = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u"voc2brain"))
-        database_path = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/vocabulary.sdb3'))
-        statistics_database_path = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/UserStat.sdb3'))
-        backup_dirs = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/backups'))
+        elif self.operating_system == 'win32':
+            self.workplace = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u"voc2brain"))
+            self.database_path = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/vocabulary.sdb3'))
+            self.statistics_database_path = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/UserStat.sdb3'))
+            self.backup_dirs = os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/backups'))
 
-        stylesheet_plastique = [os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique.qss'),
-                                os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique_background.qss')]
-        stylesheet_green = [os.path.join(os.path.abspath(u'.'), u'stylesheets/green.qss'),
-                            os.path.join(os.path.abspath(u'.'), u'stylesheets/green_background.qss')]
-        stylesheet_pink = [os.path.join(os.path.abspath(u'.'), u'stylesheets/pink.qss'),
-                           os.path.join(os.path.abspath(u'.'), u'stylesheets/pink_background.qss')]
-        stylesheet_general = [os.path.join(os.path.abspath(u'.'), u'stylesheets/general.qss'),
-                              os.path.join(os.path.abspath(u'.'), u'stylesheets/general_background.qss')]
+            self.stylesheet_plastique = [os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique.qss'),
+                                    os.path.join(os.path.abspath(u'.'), u'stylesheets/plastique_background.qss')]
+            self.stylesheet_green = [os.path.join(os.path.abspath(u'.'), u'stylesheets/green.qss'),
+                                os.path.join(os.path.abspath(u'.'), u'stylesheets/green_background.qss')]
+            self.stylesheet_pink = [os.path.join(os.path.abspath(u'.'), u'stylesheets/pink.qss'),
+                               os.path.join(os.path.abspath(u'.'), u'stylesheets/pink_background.qss')]
+            self.stylesheet_general = [os.path.join(os.path.abspath(u'.'), u'stylesheets/general.qss'),
+                                  os.path.join(os.path.abspath(u'.'), u'stylesheets/general_background.qss')]
 
-        if not os.path.exists(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain'))):
-            os.mkdir(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain')))
+            if not os.path.exists(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain'))):
+                os.mkdir(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain')))
 
-        if not os.path.exists(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/backups'))):
-            os.mkdir(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/backups')))
+            if not os.path.exists(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/backups'))):
+                os.mkdir(os.path.join(os.environ[u'APPDATA'], os.path.normcase(u'voc2brain/backups')))
 
-        # sys.stderr = open(os.path.join(workplace, "v2b_log.txt"),"w")
+            # sys.stderr = open(os.path.join(workplace, "v2b_log.txt"),"w")

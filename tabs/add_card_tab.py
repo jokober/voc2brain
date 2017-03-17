@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets
 import time
 import datetime
 from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table,  Activity_Table, Course_Table
+from dialogs.misc_dialogs import miscDialogs
 
 
 # ADD NEW WORD TO THE DATABASE
@@ -43,6 +44,4 @@ class AddCardTab_class(object):
             self.main_window.session.commit()
 
         else:
-            error = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Critical, self.main_window.tr("Failing entry"),
-                                          self.main_window.tr("Please check your entry!"))
-            error.exec_()
+            miscDialogs(self.main_window).RequiredInformationMessageBox()

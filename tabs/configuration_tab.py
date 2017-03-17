@@ -113,7 +113,7 @@ class ConfigManagerClass(object):
         return {
             "mainConfig/organise_lessons_feature": "1",
             "mainConfig/user_feature": "1",
-            "mainConfig/backup_path": unicode(os_adjustment_object.backup_dirs),
+            "mainConfig/backup_path": unicode(os_adjustment_object(self.main_window).backup_dirs),
             "mainConfig/design_feature": "1",
             "mainConfig/design_choice": "fusion",
             "mainConfig/reminder": "0",

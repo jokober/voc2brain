@@ -92,7 +92,7 @@ class init_main_window_class(object):
         self.main_window.design_combo.addItem(u'Default')
 
         for style_string, platforms in list_of_styles:
-            if os_adjustment_object.operating_system in platforms:
+            if os_adjustment_object(self.main_window).operating_system in platforms:
                 # fill combobox with course_names
                 self.main_window.design_combo.addItem(style_string)
 
@@ -101,7 +101,7 @@ class init_main_window_class(object):
         ######################
         # OS specific changes to the ui
         ######################
-        if os_adjustment_object.operating_system == 'linux2':
+        if os_adjustment_object(self.main_window).operating_system == 'linux2':
             pass
         elif os_adjustment_object.operating_system == "darwin":
             self.main_window.activate_Designs.hide()

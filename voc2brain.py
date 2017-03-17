@@ -26,13 +26,18 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         uic.loadUi(os.path.abspath(u'.' + u'/ui_resources/MainWindow.ui'), self)
 
+        self.version = "5.0beta"
+        self.development_version = True
+
+
         # Get all custom signals
         self.communicate = Communicate()
 
         self.voc2brain_app = voc2brain_app
 
         # Create sqlalchemy engine and session
-        self.local_engine = create_engine('sqlite:///'+ os_adjustment_object.database_path, isolation_level="READ UNCOMMITTED" )
+        print os_adjustment_object(self).database_path
+        self.local_engine = create_engine('sqlite:///'+ os_adjustment_object(self).database_path, isolation_level="READ UNCOMMITTED" )
 
         self.Session = sessionmaker(bind=self.local_engine)
         self.session = self.Session()
