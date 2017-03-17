@@ -45,7 +45,7 @@ class init_main_window_class(object):
         Tablist = [
         (self.main_window.SettingsTab_flashcard, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_flashcardConfig.svg'))),
         (self.main_window.SettingsTab_reminder, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_reminder.svg'))),
-        (self.main_window.SettingsTab_synchronisation, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_sync.svg'))),
+        #(self.main_window.SettingsTab_synchronisation, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_sync.svg'))),
         (self.main_window.SettingsTab_backups, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_backup.svg'))),
         (self.main_window.SettingsTab_features , QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/tab_features.svg'))),
 
@@ -71,9 +71,6 @@ class init_main_window_class(object):
         self.main_window.RandomVocConfigLine.setValidator(QtGui.QIntValidator(0, 999, self.main_window))
 
         Featurelist = [
-            (self.main_window.activate_organise_lessons_feature,
-             QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/feature_language.svg')),
-             "mainConfig/organise_lessons_feature"),
             (self.main_window.activate_Designs, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/feature_design.svg')),
              "mainConfig/design_feature"),
             (self.main_window.activate_fontsizeFeature, QtGui.QIcon(os.path.join(os.path.abspath(u'.'), U'icons/feature_font.svg')),

@@ -16,7 +16,7 @@ class DatabaseTabClass(object):
         self.main_window.communicate.editing_finished_signal.connect(self.fill_table)
 
         # Create header variable
-        self.header = [self.main_window.tr('Front-side'), self.main_window.tr('Back-side'), self.main_window.tr('Next practice'), self.main_window.tr('Level'), self.main_window.tr('Course')]
+        self.header = [self.main_window.tr('Front-side'), self.main_window.tr('Back-side'), self.main_window.tr('Next practice'), self.main_window.tr('Deck'), self.main_window.tr('Course')]
 
         # standard item model
         self.model = QtGui.QStandardItemModel()
@@ -45,8 +45,6 @@ class DatabaseTabClass(object):
         self.voclist = self.main_window.session.query(Vocabulary_Table).all()
         print type(self.voclist)
         print self.voclist
-
-
 
         # Fill standard item model with data
         item = QtGui.QStandardItem

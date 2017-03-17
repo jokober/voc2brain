@@ -53,7 +53,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         dict_of_ui_elements_and_config_keys = {
             "mainConfig/fontSize_feature": self.activate_fontsizeFeature,
-            "mainConfig/organise_lessons_feature": self.activate_organise_lessons_feature,
             "mainConfig/window_reminder": self.own_window_radio,
             "mainConfig/notification_reminder": self.notification_radio,
             "mainConfig/design_feature": self.activate_Designs,
