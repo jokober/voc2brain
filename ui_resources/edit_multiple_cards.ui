@@ -35,12 +35,21 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QTableView" name="cards_to_edit_tableView">
+       <widget class="QTreeView" name="cards_to_edit_treeView">
+        <property name="editTriggers">
+         <set>QAbstractItemView::DoubleClicked</set>
+        </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::SingleSelection</enum>
         </property>
         <property name="selectionBehavior">
          <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <property name="rootIsDecorated">
+         <bool>false</bool>
+        </property>
+        <property name="itemsExpandable">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -60,9 +69,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="edit_voc_button">
           <property name="text">
-           <string>Edit Single Card</string>
+           <string>Edit selected card</string>
           </property>
          </widget>
         </item>
@@ -147,6 +156,13 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="delete_cards">
+          <property name="text">
+           <string>Delete Cards</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">

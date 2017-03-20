@@ -5,11 +5,11 @@ from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabu
 
 # CLASS WHICH HANDLES THE "Edit Dialog"
 class SingleEditDialogClass(QtWidgets.QDialog):
-    def __init__(self, card_to_edit, main_window):
+    def __init__(self, cards_to_edit, main_window):
         QtWidgets.QDialog.__init__(self)
         uic.loadUi(os.path.abspath(u'./ui_resources/edit_single_card.ui'), self)
 
-        self.card_to_edit = card_to_edit
+        self.card_id_current_card = cards_to_edit[0]
         self.main_window = main_window
 
         self.delete_item.clicked.connect(self.delete_voc)
@@ -22,23 +22,28 @@ class SingleEditDialogClass(QtWidgets.QDialog):
         Loads a new card into the dialog.
 
         """
+        print int(self.card_id_current_card)
+        self.current_word = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=int(self.card_id_current_card)).first()
 
-        self.current_word = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=self.card_to_edit).first()
+        self.course_combo.setCurrentIndex(self.course_combo.findText(self.current_word.course_name))
 
-        self.course_combo.setCurrentIndex(self.course_combo.findText(self.current_word.course))
+        # Uncomment when lesson feature gets rolled out
+        #self.lesson_combo.setCurrentIndex(self.lesson_combo.findText(self.current_word.lesson_name))
+        self.lesson_frame.hide()
 
-        self.lesson_combo.setCurrentIndex(self.lesson_combo.findText(self.current_word.lesson))
-
-        self.select_step.setValue(int(self.current_word.deck))
-        self.select_step.setSuffix('')
-        self.select_step.setPrefix('')
+        self.deck_spinbox.setValue(int(self.current_word.deck))
+        self.deck_spinbox.setSuffix('')
+        self.deck_spinbox.setPrefix('')
 
         self.front_side_textedit.setPlainText(self.current_word.front)
         self.flip_side_textedit.setPlainText(self.current_word.back)
 
-    # DELETE THE CURRENT WORD
     def delete_voc(self):
-        card = self.current_word.card_id
+        """
+        Deletes the card
+
+        """
+        card = self.current_word
         self.main_window.session.delete(card)
 
         # Update QTableView by emitting the "editing_finished_signal"
@@ -56,10 +61,16 @@ class SingleEditDialogClass(QtWidgets.QDialog):
         new_backside = unicode(self.flip_side_textedit.toPlainText())
         new_deck = self.deck_spinbox.value()
         new_course = self.course_combo.currentText()
-        new_lesson = self.lesson_combo.currentText()
+        update_dict = {'deck': new_deck, "course_name":new_course, "front":new_frontside, "back": new_backside}
 
-        self.main_window.session.query(Vocabulary_Table).filter_by(card_id=card_id).update(
-            {'deck': new_deck, "front": new_frontside, "back":new_backside, "course":new_course, "new_lesson": new_lesson})
+        # Add lesson if the organise lessons feature is activated
+        if self.main_window.config.get("mainConfig/organise_lessons_feature") == 0:
+            new_lesson = self.lesson_combo.currentText()
+            update_dict["lesson_name"] = new_lesson
+
+        # Send Changes to Database
+        self.main_window.session.query(Vocabulary_Table).filter_by(card_id=card_id_current_card).update(update_dict)
+        self.main_window.session.commit()
 
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()

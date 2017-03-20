@@ -10,7 +10,9 @@ from Voc2brain_latest.misc.custom_signals import Communicate
 from Voc2brain_latest.tabs.init_main_window import init_main_window_class
 from database.database_migrate import DatabaseMigrateClass
 from dialogs.language_switcher import lsDialog
+
 from misc.os_adjustments import os_adjustment_object
+from misc.regular_db_tasks import RegularDBTasksClass
 
 from tabs.configuration_tab import ConfigurationTabClass, ConfigManagerClass
 from tabs.database_tab import DatabaseTabClass
@@ -29,13 +31,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.version = "5.0beta"
         self.development_version = True
 
-
+        #################
         # Get all custom signals
+        #################
         self.communicate = Communicate()
 
         self.voc2brain_app = voc2brain_app
 
+        #################
         # Create sqlalchemy engine and session
+        #################
         print os_adjustment_object(self).database_path
         self.local_engine = create_engine('sqlite:///'+ os_adjustment_object(self).database_path, isolation_level="READ UNCOMMITTED" )
 
@@ -46,14 +51,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.base = Base
         self.base.metadata.create_all(self.local_engine, checkfirst=True)
 
+        #################
         # Migrate database to newer version if applicable
+        #################
         DatabaseMigrateClass(self).check_version()
 
+        #################
         # Prepare the ui
+        #################
         init_main_window_class(self)
         self.MainTabs.currentChanged.connect(self.whichTab)
 
+        #################
         # Prepare config manager
+        #################
         self.config = ConfigManagerClass(self)
 
         dict_of_ui_elements_and_config_keys = {
@@ -76,6 +87,12 @@ class MainWindow(QtWidgets.QMainWindow):
         for config_key in dict_of_ui_elements_and_config_keys:
             ui_element = dict_of_ui_elements_and_config_keys[config_key]
             self.config.add_config_handler(config_key, ui_element)
+
+        #################
+        #
+        #################
+        self.regular_db_tasks = RegularDBTasksClass(self)
+
 
     def __run__(self):
         pass

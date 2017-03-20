@@ -15,8 +15,12 @@ class CourseTabClass(object):
         self.main_window.edit_course_name_button.clicked.connect(lambda: self.rename_course())
         self.main_window.course_manager_treeView.selectionModel().selectionChanged.connect(lambda: self._load_course())
 
-    # FILLS THE TREEVIEW WIDGET WITH COURSE NAMES
+
     def fill_course_treeview(self):
+        """
+        Fills the treeview with items
+
+        """
         self.course_treeview_model = QtGui.QStandardItemModel()
         self.course_header = [self.main_window.tr('Courses')]
         self.course_treeview_model.setHorizontalHeaderLabels(self.course_header)
@@ -111,14 +115,6 @@ class CourseTabClass(object):
 
     def rename_course(self):
         current_course_name = self._get_selected_course()
-
-        query = self.main_window.session.query(Course_Table).filter_by(course_name=current_course_name).first()
-        print "daa"
-        for i in query.cards.all():
-            print unicode(i.front)
-        print "hier"
-
-
 
         new_course_name, ok = QtWidgets.QInputDialog.getText(self.main_window, self.main_window.tr('Edit Course Name'), self.main_window.tr('Enter a new name for this course:'), QtWidgets.QLineEdit.Normal, current_course_name)
 

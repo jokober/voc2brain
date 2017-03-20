@@ -1,78 +1,94 @@
 # -*- coding: utf-8 -*-
 import os
-from PyQt5 import uic, QtWidgets
+from PyQt5 import uic, QtWidgets, QtGui
+from edit_single_card_dialog import SingleEditDialogClass
 from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table, Activity_Table
 
 # CLASS WHICH HANDLES THE "Edit Dialog"
-class SingleEditDialogClass(QtWidgets.QDialog):
-    def __init__(self, card_to_edit, main_window):
+class MultipleEditDialogClass(QtWidgets.QDialog):
+    def __init__(self, cards_to_edit, main_window):
         QtWidgets.QDialog.__init__(self)
-        uic.loadUi(os.path.abspath(u'./ui_resources/edit_single_card.ui'), self)
+        uic.loadUi(os.path.abspath(u'./ui_resources/edit_multiple_cards.ui'), self)
 
-        self.words_to_edit_list = card_to_edit
+        self.cards_to_edit = cards_to_edit
         self.main_window = main_window
 
-        self.delete_item.clicked.connect(self.delete_voc)
+        self.delete_cards.clicked.connect(lambda: self.delete_cards_slot())
+        self.edit_voc_button.clicked.connect(self.edit_voc)
         self.ed_ok.clicked.connect(self.save_changes)
 
-        self.load_new_card()
+        self.fill_edit_treeview()
 
-        voc = self.main_window.session.query(Vocabulary_Table).filter_by(card_id=self.voc_nr.data()).first()
-        print voc
-
-    def load_new_card(self):
+    def fill_edit_treeview(self):
         """
-        Loads a new word into the dialog if there are still items in
-        the "words_to_edit_list". If there are not items left in the
-        list, the dialog will be closed.
+        Fills the treeview with items
 
         """
-        if not len(self.words_to_edit_list) ==0:
-            self.current_word = self.words_to_edit_list[0]
+        self.edit_voc_treeview_model = QtGui.QStandardItemModel()
+        header = [self.main_window.tr('Card ID'),
+                  self.main_window.tr('Front-side'),
+                  self.main_window.tr('Back-side'),
+                  self.main_window.tr('Deck'),
+                  self.main_window.tr('Course')
+                  ]
 
-            self.course_combo.setCurrentIndex(self.course_combo.findText(self.current_word.course))
+        # Add lesson header if the organise lessons feature is activated
+        if self.main_window.config.get("mainConfig/organise_lessons_feature") == 0:
+            header.append(self.main_window.tr('Lesson'))
 
-            self.lesson_combo.setCurrentIndex(self.lesson_combo.findText(self.current_word.lesson))
+        self.edit_voc_treeview_model.setHorizontalHeaderLabels(header)
 
-            self.select_step.setValue(int(self.current_word.deck))
-            self.select_step.setSuffix('')
-            self.select_step.setPrefix('')
+        parentItem = self.edit_voc_treeview_model
 
-            self.front_side_textedit.setPlainText(self.current_word.front)
-            self.flip_side_textedit.setPlainText(self.current_word.back)
+        for card_id in self.cards_to_edit:
+            current_word = self.main_window.session.query(Vocabulary_Table).filter_by(
+                card_id=int(card_id)).first()
+            row_list = [QtGui.QStandardItem(str(current_word.card_id)),
+                        QtGui.QStandardItem(current_word.front),
+                        QtGui.QStandardItem(current_word.back),
+                        QtGui.QStandardItem(str(current_word.deck)),
+                        QtGui.QStandardItem(current_word.course_name)
+                        ]
 
-            del self.words_to_edit_list[0]
+            # Add lesson header if the organise lessons feature is activated
+            if self.main_window.config.get("mainConfig/organise_lessons_feature") == 0:
+                row_list.append(QtGui.QStandardItem(current_word.lesson_name))
 
-        else:
-            self.close()
+            parentItem.appendRow(row_list)
 
-    # DELETE THE CURRENT WORD
-    def delete_voc(self):
-        card = self.current_word.card_id
-        self.main_window.session.delete(card)
 
-        # Update QTableView by emitting the "editing_finished_signal"
-        self.main_window.communicate.editing_finished_signal.emit()
-        self.load_new_card()
+        self.cards_to_edit_treeView.setModel(self.edit_voc_treeview_model)
 
+    def delete_cards_slot(self):
+        """
+        Deletes all cards
+
+        """
+        list_of_cards = self.cards_to_edit
+        self.main_window.regular_db_tasks.show_delete_dialog(list_of_cards)
+
+    def edit_voc(self):
+        index = self.cards_to_edit_treeView.selectionModel().selectedRows()
+        cards_to_edit = [index[0].data()]
+
+        self.main_window.edit_single_Dlg = SingleEditDialogClass(cards_to_edit, self.main_window)
+        self.main_window.edit_single_Dlg.show()
 
     # SAVE THE CHANGES
     def save_changes(self):
-        new_card = self.course_combo.currentIndex()
-        if new_card == -1:
-            new_card = 0
-
-        new_frontside = unicode(self.front_side_textedit.toPlainText())
-        new_backside = unicode(self.flip_side_textedit.toPlainText())
         new_deck = self.deck_spinbox.value()
         new_course = self.course_combo.currentText()
-        new_lesson = self.lesson_combo.currentText()
+        update_dict = {'deck': new_deck, "course_name":new_course}
 
-        self.main_window.session.query(Vocabulary_Table).filter_by(card_id=card_id).update(
-            {'deck': new_deck, "front": new_frontside, "back":new_backside, "course":new_course, "new_lesson": new_lesson})
+        # Add lesson if the organise lessons feature is activated
+        if self.main_window.config.get("mainConfig/organise_lessons_feature") == 0:
+            new_lesson = self.lesson_combo.currentText()
+            update_dict["lesson_name"] = new_lesson
+
+        # Send Changes to Database
+        self.main_window.session.query(Vocabulary_Table).filter_by(card_id=card_id).update(update_dict)
+        self.main_window.session.commit()
 
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()
-
-        self.load_new_card()
 
