@@ -75,4 +75,4 @@ class SingleEditDialogClass(QtWidgets.QDialog):
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()
 
-        self.close()
+        self.close() 
