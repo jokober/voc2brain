@@ -51,8 +51,11 @@ class SingleEditDialogClass(QtWidgets.QDialog):
 
         self.close()
 
-    # SAVE THE CHANGES
     def save_changes(self):
+        """
+        Save the changes
+
+        """
         new_card = self.course_combo.currentIndex()
         if new_card == -1:
             new_card = 0
@@ -75,4 +78,4 @@ class SingleEditDialogClass(QtWidgets.QDialog):
         # Update QTableView by emitting the "editing_finished_signal"
         self.main_window.communicate.editing_finished_signal.emit()
 
-        self.close() 
+        self.close()

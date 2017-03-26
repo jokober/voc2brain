@@ -72,11 +72,9 @@ class CourseTabClass(object):
         self.main_window.course_cards_tableView.setColumnWidth(1, 240)
         self.main_window.course_cards_tableView.setColumnWidth(2, 160)
         self.main_window.course_cards_tableView.setColumnWidth(3, 75)
-        print self._get_selected_course()
+
         self.course_voclist = self.main_window.session.query(Vocabulary_Table)
         self.course_voclist= self.course_voclist.filter_by(course_name=unicode(self._get_selected_course())).all()
-        print self.course_voclist
-        print unicode(self.course_voclist)
 
         # Fill standard item model with data
         item = QtGui.QStandardItem
@@ -88,7 +86,6 @@ class CourseTabClass(object):
             self.course_cards_model.setItem(row, 3, item(str(word.deck)))
             self.course_cards_model.setItem(row, 4, item(word.course_name))
 
-    # LOAD UI ELEMENTS BASED ON CURRENTLY SELECTED COURSE
     def _load_course(self):
         """
         This fuction will run as soon as a new course has been selected in the  'course_manager_treeView'

@@ -2,22 +2,28 @@
 import os
 from PyQt5 import uic, QtWidgets, QtGui
 from edit_single_card_dialog import SingleEditDialogClass
-from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table, Activity_Table
+from database.database_table_definitions import Vocabulary_Table, Deleted_Vocabulary_Table, Config_Table, Metadata_Table, Activity_Table, Course_Table
 
 # CLASS WHICH HANDLES THE "Edit Dialog"
 class MultipleEditDialogClass(QtWidgets.QDialog):
     def __init__(self, cards_to_edit, main_window):
         QtWidgets.QDialog.__init__(self)
         uic.loadUi(os.path.abspath(u'./ui_resources/edit_multiple_cards.ui'), self)
+        self.main_window = main_window
 
         self.cards_to_edit = cards_to_edit
-        self.main_window = main_window
+        self.cards_to_edit_query = self.main_window.session.query(Vocabulary_Table).filter(
+                Vocabulary_Table.card_id.in_(self.cards_to_edit))
 
         self.delete_cards.clicked.connect(lambda: self.delete_cards_slot())
         self.edit_voc_button.clicked.connect(self.edit_voc)
-        self.ed_ok.clicked.connect(self.save_changes)
+        self.ed_ok.clicked.connect(self.save_changes_multiple_cards)
 
         self.fill_edit_treeview()
+
+        for card in self.main_window.session.query(Course_Table.course_name).distinct().all():
+            self.course_combo.addItem(card.course_name)
+
 
     def fill_edit_treeview(self):
         """
@@ -40,9 +46,7 @@ class MultipleEditDialogClass(QtWidgets.QDialog):
 
         parentItem = self.edit_voc_treeview_model
 
-        for card_id in self.cards_to_edit:
-            current_word = self.main_window.session.query(Vocabulary_Table).filter_by(
-                card_id=int(card_id)).first()
+        for current_word in self.cards_to_edit_query:
             row_list = [QtGui.QStandardItem(str(current_word.card_id)),
                         QtGui.QStandardItem(current_word.front),
                         QtGui.QStandardItem(current_word.back),
@@ -75,15 +79,15 @@ class MultipleEditDialogClass(QtWidgets.QDialog):
         self.main_window.edit_single_Dlg.show()
 
     # SAVE THE CHANGES
-    def save_changes(self):
+    def save_changes_multiple_cards(self):
         new_deck = self.deck_spinbox.value()
         new_course = self.course_combo.currentText()
         update_dict = {'deck': new_deck, "course_name":new_course}
 
         # Add lesson if the organise lessons feature is activated
-        if self.main_window.config.get("mainConfig/organise_lessons_feature") == 0:
-            new_lesson = self.lesson_combo.currentText()
-            update_dict["lesson_name"] = new_lesson
+        #if self.main_window.config.get("mainConfig/organise_lessons_feature") == 0:
+        #    new_lesson = self.lesson_combo.currentText()
+        #    update_dict["lesson_name"] = new_lesson
 
         # Send Changes to Database
         self.main_window.session.query(Vocabulary_Table).filter_by(card_id=card_id).update(update_dict)

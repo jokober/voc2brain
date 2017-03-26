@@ -280,7 +280,7 @@ QScrollArea#scrollArea_3, QScrollArea#scrollArea,  QStackedWidget, QWidget#flash
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>3</number>
       </property>
       <property name="iconSize">
        <size>
@@ -2556,7 +2556,7 @@ border-left-color: green;
                    <x>0</x>
                    <y>0</y>
                    <width>1300</width>
-                   <height>572</height>
+                   <height>524</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -2834,7 +2834,7 @@ border-left-color: green;
                            <set>Qt::ImhNone</set>
                           </property>
                           <property name="text">
-                           <string notr="true"/>
+                           <string notr="true">15</string>
                           </property>
                          </widget>
                         </item>
