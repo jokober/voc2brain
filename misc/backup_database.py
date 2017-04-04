@@ -12,7 +12,7 @@ class BackupDatabaseClass(object):
     def __init__(self, main_window):
         self.main_window = main_window
         self.backup_path =  self.main_window.session.query(Config_Table).filter_by(key="mainConfig/backup_path").first().value
-        self.database_path = os_adjustment_object.database_path
+        self.database_path = os_adjustment_object(main_window).database_path
 
         # Open "backupPage"
         self.main_window.configTabs.setCurrentIndex(3)
@@ -25,8 +25,11 @@ class BackupDatabaseClass(object):
         self.main_window.select_backup_folder_button.clicked.connect(self.select_backup_folder)
         self.main_window.use_default_dir_button.clicked.connect(self.reset_backup_folder)
 
-    # GET A LIST OF ALL FILES IN THE BACKUP DIREKTORY
     def list_all_backups(self):
+        """
+        Get a list of all files in the backup directory
+
+        """
         files_in_directory = []
         for (dirpath, dirnames, filenames) in os.walk(str(self.backup_path)):
             files_in_directory.extend(filenames)
@@ -47,10 +50,6 @@ class BackupDatabaseClass(object):
 
         # Sort list by date
         self.date_list.sort(reverse=True)
-        print datetime.date.today()
-        print self.date_list[0]
-        print datetime.date.today()-self.date_list[0]
-
 
         # Checks if a new backup is required
         if len(self.date_list) == 0:
@@ -66,20 +65,30 @@ class BackupDatabaseClass(object):
 
         self.show_recent_backups_in_tableView()
 
-    # A COPY OF THE DATABASE FILE WILL BE SAVED IN FOLLOWING FORMAT: "voc2brain_backup_DDMMYYYY.sdb3"
     def backup_database(self):
+        """
+        A copy of the database file will be saved in following filename format: 'voc2brain_backup_DDMMYYYY.sdb3'"
+
+        """
         print "### Info ### Save a new Backup"
         copyfile(self.database_path, os.path.abspath(self.backup_path + U'/voc2brain_backup_' + str(datetime.date.today())))
         self.list_all_backups()
 
-    # DELETE THE OLDEST BACKUP FILES
     def delete_old_backup(self):
+        """
+        Delete redundant backup files.
+
+        """
         print "### Info ### Delete redundant backups"
         for i in range(len(self.date_list)-20):
             os.remove(os.path.abspath(self.backup_path + U'/voc2brain_backup_' + str(self.date_list[0])+ ".sdb3") )
 
-    # SHOWS THE RECENT BACKUPS AND INITIATES THE BACKUP BY RUNNING THE
+
     def show_recent_backups_in_tableView(self):
+        """
+        Show the recent backup un the tableView
+        :return:
+        """
         # standard item model
         model = QtGui.QStandardItemModel()
         model.setHorizontalHeaderLabels([self.main_window.tr('Filename'), self.main_window.tr('Date')])
@@ -95,10 +104,16 @@ class BackupDatabaseClass(object):
         self.main_window.recent_backup_tableView.setModel(model)
         self.main_window.recent_backup_tableView.setColumnWidth(0, 400)
 
-    # OPENS A QFILEDIALOG AND ASKS FOR THE A NEW BACKUP FOLDER
     def select_backup_folder(self):
+        """
+        Open a QFileDialog and asks for a new backup directory
+
+        """
         load_dir = unicode(QtWidgets.QFileDialog.getExistingDirectory(self, self.main_window.tr('Select backup directory'), self.backup_path))
 
-    # RESETS THE BACKUP FOLDER TO THE DEFAULT PATH
     def reset_backup_folder(self):
+        """
+        Reset the backup directory to the default path
+
+        """
         pass

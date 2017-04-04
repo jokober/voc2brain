@@ -11,9 +11,12 @@ class CourseTabClass(object):
         self.fill_course_treeview()
         self.fill_lessons_treeview()
 
+        # Fills the 'course_cards_tableView' with cards
+        self.fill_table_course_cards(None)
+
         self.main_window.add_course_button.clicked.connect(lambda: self.create_course())
         self.main_window.edit_course_name_button.clicked.connect(lambda: self.rename_course())
-        self.main_window.course_manager_treeView.selectionModel().selectionChanged.connect(lambda: self._load_course())
+        self.main_window.course_manager_treeView.selectionModel().selectionChanged.connect(lambda: self.load_course())
 
 
     def fill_course_treeview(self):
@@ -33,7 +36,7 @@ class CourseTabClass(object):
         self.main_window.course_manager_treeView.setModel(self.course_treeview_model)
 
         # reload ui elements
-        self._load_course()
+        self.load_course()
 
     # FILLS THE TREEVIEW WIDGET WITH LESSON NAMES
     def fill_lessons_treeview(self):
@@ -51,7 +54,7 @@ class CourseTabClass(object):
         self.main_window.lessons_treeView.setModel(self.lessons_treeview_model)
         self.main_window.lessons_manager_treeView.setModel(self.lessons_treeview_model)
         """
-    def fill_table_course_cards(self):
+    def fill_table_course_cards(self, course_name):
         """
         Fills the 'course_cards_tableView' with cards
 
@@ -74,7 +77,9 @@ class CourseTabClass(object):
         self.main_window.course_cards_tableView.setColumnWidth(3, 75)
 
         self.course_voclist = self.main_window.session.query(Vocabulary_Table)
-        self.course_voclist= self.course_voclist.filter_by(course_name=unicode(self._get_selected_course())).all()
+        if course_name != None:
+            self.course_voclist= self.course_voclist.filter_by(course_name=unicode(course_name))
+        self.course_voclist = self.course_voclist.all()
 
         # Fill standard item model with data
         item = QtGui.QStandardItem
@@ -86,7 +91,7 @@ class CourseTabClass(object):
             self.course_cards_model.setItem(row, 3, item(str(word.deck)))
             self.course_cards_model.setItem(row, 4, item(word.course_name))
 
-    def _load_course(self):
+    def load_course(self):
         """
         This fuction will run as soon as a new course has been selected in the  'course_manager_treeView'
         It will load the course specific ui-elements and update the 'course_cards_tableView'
@@ -98,7 +103,7 @@ class CourseTabClass(object):
         self.main_window.course_name_label.setText(current_course_name)
 
         # Load the cards of the course into the qlistview
-        self.fill_table_course_cards()
+        self.fill_table_course_cards(current_course_name)
 
     # GET THE CURRENTLY SELECTED COURSE AND RETURNS IT AS UNICODE
     def _get_selected_course(self):

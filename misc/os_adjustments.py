@@ -12,6 +12,8 @@ class os_adjustment_object(object):
                 self.workplace = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain/development')
             elif main_window.development_version == False:
                 self.workplace = os.path.abspath(os.path.expanduser(u'~') + u'/.voc2brain')
+            else:
+                print " #### Error: ### No version found (development version)"
 
             self.database_path = os.path.abspath(self.workplace + u'/vocabulary.sdb3')
             self.backup_dirs = os.path.abspath(self.workplace + u'/backups')

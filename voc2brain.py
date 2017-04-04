@@ -41,7 +41,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #################
         # Create sqlalchemy engine and session
         #################
-        print os_adjustment_object(self).database_path
         self.local_engine = create_engine('sqlite:///'+ os_adjustment_object(self).database_path, isolation_level="READ UNCOMMITTED" )
 
         self.Session = sessionmaker(bind=self.local_engine)
@@ -93,12 +92,13 @@ class MainWindow(QtWidgets.QMainWindow):
         #################
         self.regular_db_tasks = RegularDBTasksClass(self)
 
-
-    def __run__(self):
-        pass
-
-    # THIS WILL START THE INDIVIDUAL "tab_classes"
     def whichTab(self):
+        """
+
+        Start the individual tab class if a tab botton gets clicked
+
+        """
+
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.stats_tab_page):
             StatsTabClass(self)
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.practice_tab_page):
@@ -118,6 +118,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def translate_ui(self):
+        """
+
+        Loads the ui translations
+
+        """
         self.translator = QtCore.QTranslator()
 
         if self.session.query(config_table).filter(config_table.key == "localization/LanguageKey") != 'no_file':
@@ -130,6 +135,11 @@ class MainWindow(QtWidgets.QMainWindow):
         app.installTranslator(self.translator)
 
     def closeEvent(self,event):
+        """
+
+        Event which will run as if the application gets closed
+
+        """
         # uncomment if you want Voc2brain should ask before closing
         """result = QtWidgets.QMessageBox.question(self,
                       "Confirm Exit...",

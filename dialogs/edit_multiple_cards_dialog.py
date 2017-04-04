@@ -24,6 +24,14 @@ class MultipleEditDialogClass(QtWidgets.QDialog):
         for card in self.main_window.session.query(Course_Table.course_name).distinct().all():
             self.course_combo.addItem(card.course_name)
 
+        ##############################
+        # Hide Bulk Edit frames
+        ##############################
+        self.course_edit_frame.hide()
+        self.deck_edit_frame.hide()
+
+        #self.add_bulk_edit_button.clicked.connect()
+
 
     def fill_edit_treeview(self):
         """
