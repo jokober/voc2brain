@@ -101,12 +101,14 @@ class init_main_window_class(object):
         ######################
         # OS specific changes to the ui
         ######################
-        if os_adjustment_object(self.main_window).operating_system == 'linux2':
+        operating_system = os_adjustment_object(self.main_window)
+        
+        if operating_system == 'linux2':
             pass
-        elif os_adjustment_object.operating_system == "darwin":
+        elif operating_system == "darwin":
             self.main_window.activate_Designs.hide()
             self.main_window.line_12.hide()
-        elif os_adjustment_object.operating_system == 'win32':
+        elif operating_system == 'win32':
             pass
 
 

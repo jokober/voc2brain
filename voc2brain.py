@@ -6,8 +6,8 @@ from PyQt5 import QtCore, uic, QtWidgets
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Voc2brain_latest.misc.custom_signals import Communicate
-from Voc2brain_latest.tabs.init_main_window import init_main_window_class
+from misc.custom_signals import Communicate
+from tabs.init_main_window import init_main_window_class
 from database.database_migrate import DatabaseMigrateClass
 from dialogs.language_switcher import lsDialog
 
@@ -32,7 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.development_version = True
 
         #################
-        # Get all custom signals
+       # Get all custom signals
         #################
         self.communicate = Communicate()
 
