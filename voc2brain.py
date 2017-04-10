@@ -32,7 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.development_version = True
 
         #################
-       # Get all custom signals
+        # Get all custom signals
         #################
         self.communicate = Communicate()
 
