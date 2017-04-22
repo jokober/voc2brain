@@ -8,5 +8,6 @@ setup(name='Voc2brain',
       author='Jonathan Kossick',
       author_email='dev.kossick@gmail.com',
       #url='https://www.python.org/sigs/distutils-sig/',
-      packages=['distutils', 'distutils.command'],
+      packages=['database', 'dialogs', 'misc', 'pyqtconfig', 'tabs'],
+      include_package_data=True,
      )
