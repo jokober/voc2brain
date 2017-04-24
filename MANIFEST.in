@@ -1,2 +1,2 @@
-include *
-recursive-include icons *
+include * ui_resources/* translation/* icons/* stylesheets/*
+recursive-include ui_ressources/*

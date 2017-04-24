@@ -153,8 +153,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         event.accept()
 
-
-if __name__ == "__main__":
+def main():
     import sys
     global voc2brain_app
     voc2brain_app = QtWidgets.QApplication(sys.argv)
@@ -166,3 +165,7 @@ if __name__ == "__main__":
     mainWindow = MainWindow(voc2brain_app)
     mainWindow.show()
     sys.exit(voc2brain_app.exec_())
+
+
+if __name__ == "__main__":
+    main()
