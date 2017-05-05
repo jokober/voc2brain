@@ -9,6 +9,10 @@ setup(name='Voc2brain',
       author_email='dev.kossick@gmail.com',
       #url='https://www.python.org/sigs/distutils-sig/',
 
+      install_requires=[
+            'setuptools'
+      ],
+
       packages=find_packages("."),
       py_modules=['voc2brain'],
       include_package_data=True,
