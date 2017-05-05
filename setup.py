@@ -9,12 +9,12 @@ setup(name='Voc2brain',
       author_email='dev.kossick@gmail.com',
       #url='https://www.python.org/sigs/distutils-sig/',
 
-      packages=find_packages(""),
+      packages=find_packages("."),
       py_modules=['voc2brain'],
       include_package_data=True,
 
       entry_points = {
         'gui_scripts': ['voc2brain=voc2brain:main'],
-          
+
       }
      )
