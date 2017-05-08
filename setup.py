@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-#from setuptools import setup, find_packages
-from distutils import setup, find_packages
+from setuptools import setup, find_packages
 
 setup(name='Voc2brain',
       version='4.9',
@@ -18,8 +17,8 @@ setup(name='Voc2brain',
       py_modules=['voc2brain'],
       include_package_data=True,
 
-      #entry_points = {
-      #  'gui_scripts': ['voc2brain=voc2brain:main'],
+      entry_points = {
+        'gui_scripts': ['voc2brain=voc2brain:main'],
 
-      #}
+      }
      )
