@@ -7,7 +7,7 @@ setup(name='Voc2brain',
       description='Voc2brain is a simple flashcard software',
       author='Jonathan Kossick',
       author_email='dev.kossick@gmail.com',
-      #url='https://www.python.org/sigs/distutils-sig/',
+      url='https://github.com/jokober/voc2brain',
 
       install_requires=[
             'setuptools'
