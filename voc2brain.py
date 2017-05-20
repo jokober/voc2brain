@@ -30,11 +30,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.version = "5.0beta"
         self.development_version = True
 
-        uic.loadUi(os.path.abspath(u'/ui_resources/MainWindow.ui'), self)
-
-        self.version = "5.0beta"
-        self.development_version = True
-
 
         #################
         # Get all custom signals
