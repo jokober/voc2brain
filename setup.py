@@ -24,8 +24,7 @@ setup(name='Voc2brain',
             'SQLAlchemy'
       ],
 
-      packages=find_packages("."),
-      py_modules=['voc2brain'],
+      packages=find_packages("voc2brain"),
       include_package_data=True,
 
       entry_points = {
