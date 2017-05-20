@@ -25,11 +25,12 @@ from tabs.add_card_tab import AddCardTab_class
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, voc2brain_app):
         QtWidgets.QMainWindow.__init__(self)
+        self.module_path = os.path.dirname(sys.modules[__name__].__file__)
         uic.loadUi(os.path.abspath(self.module_path + u'/ui_resources/MainWindow.ui'), self)
 
         self.version = "5.0beta"
         self.development_version = True
-        self.module_path = sys.modules[__name__].__file__
+        
 
         #################
         # Get all custom signals
