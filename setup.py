@@ -21,11 +21,7 @@ setup(name='Voc2brain',
              ],
 
       install_requires=[
-            'setuptools',
-            'python-qt5'
-            'numpy',
             'SQLAlchemy'
-
       ],
 
       packages=find_packages("."),
