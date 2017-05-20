@@ -27,15 +27,8 @@ else:
         import PyQt5
         USE_QT_PY = PYQT5
     except:
-        try:
-            import PyQt4
-            USE_QT_PY = PYQT4
-        except ImportError:
-            try:
-                import PySide
-                USE_QT_PY = PYSIDE
-            except:
-                pass
+    	print "PyQt5 could not get imported"
+
 
 # Import PyQt classes accessible in elsewhere through from qt import *
 if USE_QT_PY == PYQT5:
@@ -45,20 +38,3 @@ if USE_QT_PY == PYQT5:
     from PyQt5.QtNetwork import *
     from PyQt5.QtWidgets import *
     #from PyQt5.QtWebKitWidgets import *
-
-elif USE_QT_PY == PYSIDE:
-    from PySide.QtGui import *
-    from PySide.QtCore import *
-    from PySide.QtNetwork import *
-
-    pyqtSignal = Signal
-
-
-elif USE_QT_PY == PYQT4:
-    import sip
-    sip.setapi('QString', 2)
-    sip.setapi('QVariant', 2)
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
-    from PyQt4.QtWebKit import *
-    from PyQt4.QtNetwork import *
