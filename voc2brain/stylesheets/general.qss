@@ -1,0 +1,6 @@
+
+QTabBar::tab {
+ min-width: 60;
+ min-height: 30;
+}
+

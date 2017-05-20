@@ -1,0 +1,10 @@
+[main]
+host = https://www.transifex.com
+minimum_perc = 45
+
+[Voc2brain.Voc2brainDesktop]
+file_filter = translations/Voc2brain.Voc2brainDesktop/<lang>.ts
+source_file = translations/Voc2brain.Voc2brainDesktop/en.ts
+source_lang = en
+type = QT
+

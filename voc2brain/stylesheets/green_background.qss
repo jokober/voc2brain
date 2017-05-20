@@ -1,0 +1,4 @@
+QMainWindow, QDialog,QTabWidget {
+background-color: qradialgradient(spread:reflect, cx:0.303, cy:0.722, radius:2, fx:0.783, fy:0.1705, stop:0 rgba(151, 237, 93, 255), stop:0.81982 rgba(112, 237, 27, 119));
+}
+

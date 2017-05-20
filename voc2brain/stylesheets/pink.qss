@@ -1,0 +1,70 @@
+QTabWidget{
+border-color: red;
+}
+
+QTableView {
+background-color: rgb(247, 247, 247);
+}
+
+QTabBar::tab {
+ background-color: rgba(255, 255, 255, 0);
+ border: 2px solid #C4C4C3;
+ border-bottom: 0;
+ border-top-left-radius: 10px;
+ border-top-right-radius: 10px;
+ min-width: 8ex;
+}
+
+QTabBar#einstellungs_rahmen::tab:selected {
+ background-color: black;
+ border-color: #9B9B9B;
+ border-bottom-color: #C2C7CB; /* same as pane color */
+}
+
+QTabBar::tab:selected {
+ background-color: white;
+ border-color: #9B9B9B;
+ border-bottom-color: #C2C7CB; /* same as pane color */
+}
+
+QTabBar::tab:!selected {
+ margin-top: 5px; /* make non-selected tabs look smaller */
+ background-color: rgba(255, 255, 255, 0);
+}
+
+QLabel,QCheckBox,QFrame,QGroupBox,QRadioButton, QFormLayout, QProgressBar{
+	background-color: rgba(255, 255, 255, 0);
+}
+ QProgressBar{
+	background-color: rgb(255, 255, 255);
+}
+
+QPushButton, QToolButton {
+color: white;
+background-color: qlineargradient(spread:reflect, x1:0.572, y1:0.448818, x2:0.559, y2:1, stop:0.342342 rgba(111, 113, 255, 247), stop:1 rgba(207, 222, 255, 255));
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 1;
+padding: 6px;
+padding-left: 5px;
+padding-right: 5px;
+}
+
+
+QLineEdit {
+padding: 1px;
+border-style: solid;
+border: 2px solid gray;
+border-radius: 8px;
+background-color:white;
+}
+
+QPlainTextEdit, QTextEdit {
+border: 3px solid gray;
+border-radius: 25px;
+background: white;
+padding-top: 5;
+padding-left: 10;
+padding-right: 10;
+}
