@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, time, sys
+import os, time, sys, datetime
+from database.database_table_definitions import Vocabulary_Table
 from PyQt5 import QtCore, uic, QtWidgets
 
 from sqlalchemy import create_engine
@@ -95,12 +96,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def whichTab(self):
         """
 
-        Start the individual tab class if a tab botton gets clicked
+        Start the individual tab class if a tab button gets clicked
 
         """
 
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.stats_tab_page):
             StatsTabClass(self)
+            self.checkVocs2learn()
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.practice_tab_page):
             self.seconds2 = time.time()
             self.flip_side_textedit.setFocus()
@@ -115,6 +117,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.MainTabs.currentIndex() == self.MainTabs.indexOf(self.add_card_tab_page):
             AddCardTab_class(self)
 
+
+    def checkVocs2learn(self):
+        # leads to the amount of cards to learn for each day
+        date = datetime.date.today()
+        toLearnToday = self.session.query(Vocabulary_Table.card_id).filter(
+             Vocabulary_Table.date_next_practice == date).count()
+        return toLearnToday
 
 
     def translate_ui(self):
