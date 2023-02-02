@@ -1,6 +1,9 @@
-This is the development branch of Voc2brain.
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
-# Voc2brain
+> :warning: Many years ago I worked on this project in school while still learning python. The project is depricated since then. 
+
+
+# DEPRECATED Voc2brain
 Voc2brain is a vocabulary trainer with concept of allowing users to learn words in an easy and efficient way. The software assists users with retaining as much knowledge as possible.
 
 The key method Voc2brain uses is the flashcard system structuring learning around your
